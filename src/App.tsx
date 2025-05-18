@@ -1,11 +1,8 @@
+import { Routes } from "react-router-dom";
+import AppRoutes from "./routes";
+
 function App() {
-  return (
-    <>
-      <h1 className="text-3xl text-red-700 font-bold underline">
-        Hello world!
-      </h1>
-    </>
-  );
+  return <Routes>{AppRoutes}</Routes>;
 }
 
 export default App;
