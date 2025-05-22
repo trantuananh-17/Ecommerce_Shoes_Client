@@ -110,12 +110,12 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
       <div className="absolute inset-0 bg-black opacity-50" />
 
       <div
-        className="relative bg-white p-6 rounded-xl shadow-lg w-[30%] h-[75%] z-10"
+        className="relative bg-white p-6 rounded-xl shadow-lg w-[40%] h-[80%] z-10"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-4">Quản lý kích cỡ</h2>
 
-        <form className="mb-6" onSubmit={handleAddSize}>
+        <form className="mb-2" onSubmit={handleAddSize}>
           <ValidatedInput
             key={`size-${inputKey}`}
             ref={inputRef}
@@ -127,7 +127,7 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
           />
           <button
             type="submit"
-            className="bg-blue-500  text-white px-4 py-2 rounded mt-4 "
+            className="bg-blue-500 text-white px-4 py-2 rounded mt-4 "
           >
             Thêm
           </button>

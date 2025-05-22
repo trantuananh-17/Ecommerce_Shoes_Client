@@ -94,7 +94,7 @@ const TableOneColumn: React.FC<TableProps> = ({
               )}
 
               {(showEdit || showDelete) && (
-                <td className=" text-right space-x-4">
+                <td className=" text-right space-x-4 px-4">
                   {showEdit && (
                     <button
                       onClick={() => handleEdit(id)}
