@@ -8,7 +8,7 @@ const AdminLayout = () => {
       <Navbar />
       <div className="relative flex-1 flex flex-col min-h-screen">
         <AdminHeader />
-        <main className="flex-1 p-4 bg-gray-100">
+        <main className="flex-1  bg-gray-100">
           <Outlet />
         </main>
       </div>
