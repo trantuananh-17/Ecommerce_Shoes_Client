@@ -34,34 +34,7 @@ const TableManyColumn: React.FC<TableProps> = ({
 
   return (
     <>
-      <div className="pb-4  bg-white dark:bg-gray-900">
-        <div className="relative mt-1">
-          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <svg
-              className="w-4 h-4 text-gray-500 dark:text-gray-400"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-              />
-            </svg>
-          </div>
-          <input
-            type="text"
-            placeholder="Search for items"
-            className="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 
-             bg-gray-50 focus:outline-none focus:ring-0 focus:border-gray-300
-             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-          />
-        </div>
-      </div>
-      <div className="relative my-2 h-[70.2%] overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="relative my-2 h-[71%] overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs w-full text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -117,11 +90,11 @@ const TableManyColumn: React.FC<TableProps> = ({
                   </td>
                 )}
                 {(showEdit || showDelete) && (
-                  <td className="px-2 py-3 text-left space-x-4">
+                  <td className="px-2 py-3 text-right space-x-4">
                     {showEdit && (
                       <button
                         onClick={() => onEdit?.(row.id)}
-                        className="focus:outline-none text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-500 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
+                        className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-yellow-500 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900"
                       >
                         Edit
                       </button>

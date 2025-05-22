@@ -2,6 +2,7 @@ interface PaginationProps {
   currentPage: number;
   totalItems: number;
   pageSize: number;
+  column: boolean;
   onPageChange: (page: number) => void;
 }
 
@@ -9,6 +10,7 @@ const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalItems,
   pageSize,
+  column,
   onPageChange,
 }) => {
   const totalPages = Math.ceil(totalItems / pageSize);
@@ -39,7 +41,13 @@ const Pagination: React.FC<PaginationProps> = ({
   const pages = getPageNumbers();
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between mt-6 text-sm text-gray-600">
+    <div
+      className={
+        column === true
+          ? "flex flex-col sm:flex-row items-center justify-between mt-6 text-sm text-gray-600"
+          : "flex flex-col items-center justify-between mt-6 text-sm text-gray-600"
+      }
+    >
       <div className="mb-2 sm:mb-0">
         Hiển thị {from} tới {to} của {totalItems} dữ liệu
       </div>

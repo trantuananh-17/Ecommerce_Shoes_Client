@@ -13,7 +13,6 @@ export interface ValidatedInputRef {
 }
 
 interface ValidatedInputProps {
-  label: string;
   placeholder?: string;
   schema: Schema;
   value?: string;
@@ -25,7 +24,6 @@ interface ValidatedInputProps {
 const ValidatedInput = forwardRef<ValidatedInputRef, ValidatedInputProps>(
   (
     {
-      label,
       placeholder,
       schema,
       value: controlledValue,
@@ -76,19 +74,6 @@ const ValidatedInput = forwardRef<ValidatedInputRef, ValidatedInputProps>(
 
     return (
       <div>
-        <label
-          htmlFor={name}
-          className={`block mb-2 text-sm font-medium ${
-            error
-              ? "text-red-700 dark:text-red-500"
-              : value.length > 0
-              ? "text-green-700 dark:text-green-500"
-              : ""
-          }`}
-        >
-          {label}
-        </label>
-
         <input
           id={name}
           name={name}
