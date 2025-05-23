@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export type PaginationState = {
   page: number;
@@ -17,25 +17,28 @@ export const usePagination = (initialPage = 1, initialLimit = 10) => {
     totalDocs: 0,
   });
 
-  const updatePagination = (data: {
-    totalDocs: number;
-    totalPages: number;
-    currentPage: number;
-    limit: number;
-  }) => {
-    setPagination((prev) => ({
-      ...prev,
-      ...data,
-    }));
-  };
+  const updatePagination = useCallback(
+    (data: {
+      totalDocs: number;
+      totalPages: number;
+      currentPage: number;
+      limit: number;
+    }) => {
+      setPagination((prev) => ({
+        ...prev,
+        ...data,
+      }));
+    },
+    []
+  );
 
-  const setPage = (newPage: number) => {
+  const setPage = useCallback((newPage: number) => {
     setPagination((prev) => ({
       ...prev,
       page: newPage,
       currentPage: newPage,
     }));
-  };
+  }, []);
 
   return {
     pagination,

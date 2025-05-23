@@ -1,19 +1,31 @@
 import { Search } from "lucide-react";
+import ButtonSearch from "./ButtonSearch";
 
-const SearchInput = () => {
+interface SearchInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  onSearch: () => void;
+}
+
+const SearchInput: React.FC<SearchInputProps> = ({
+  value,
+  onChange,
+  onSearch,
+}) => {
   return (
-    <div className=" bg-white dark:bg-gray-900">
-      <div className="relative ">
-        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-          <Search className="text-gray-500" />
+    <div className="bg-white dark:bg-gray-900">
+      <div className="relative w-80">
+        <div className="flex items-center border border-blue-500 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="Tìm kiếm thương hiệu..."
+            className="flex-1 py-2 px-4 text-sm text-gray-900 bg-transparent focus:outline-none dark:placeholder-gray-400 dark:text-white"
+          />
+
+          <ButtonSearch onClick={onSearch} icon={Search} />
         </div>
-        <input
-          type="text"
-          placeholder="Search for items"
-          className="block py-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 
-             bg-gray-50 focus:outline-none focus:ring-0 focus:border-gray-300
-             dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-        />
       </div>
     </div>
   );

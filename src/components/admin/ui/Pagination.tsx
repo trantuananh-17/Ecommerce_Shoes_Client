@@ -44,8 +44,8 @@ const Pagination: React.FC<PaginationProps> = ({
     <div
       className={
         column === true
-          ? "flex flex-col sm:flex-row items-center justify-between mt-6 text-sm text-gray-600"
-          : "flex flex-col items-center justify-between mt-6 text-sm text-gray-600"
+          ? "flex flex-col sm:flex-row items-center justify-between mt-5 text-sm text-gray-600"
+          : "flex flex-col items-center justify-between mt-5 text-sm text-gray-600"
       }
     >
       <div className="mb-2 sm:mb-0">

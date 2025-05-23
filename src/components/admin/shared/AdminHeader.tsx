@@ -28,7 +28,7 @@ const AdminHeader = () => {
   }, []);
 
   return (
-    <div className=" container flex justify-between p-4">
+    <div className=" container flex justify-between p-2">
       <div></div>
       <div className="relative" ref={dropdownRef}>
         <button

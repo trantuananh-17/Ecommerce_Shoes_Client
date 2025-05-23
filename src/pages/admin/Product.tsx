@@ -5,10 +5,25 @@ import { useToggle } from "../../hooks/useToggle";
 import Size from "./other/Size";
 import SearchInput from "../../components/admin/ui/SearchInput";
 import ButtonForm from "../../components/admin/ui/ButtonForm";
-import { CirclePlus, Layers2, LayoutGrid, Package, Ruler } from "lucide-react";
+import {
+  CirclePlus,
+  Layers2,
+  LayoutGrid,
+  Package,
+  Palette,
+  Ruler,
+} from "lucide-react";
+import Category from "./other/Category";
+import Closure from "./other/Closure";
+import Material from "./other/Material";
+import Color from "./other/Color";
 
 const Product = () => {
   const [isSize, toggleSize] = useToggle(false);
+  const [isCategory, toggleCategory] = useToggle(false);
+  const [isClosure, toggleClosure] = useToggle(false);
+  const [isMaterial, toggleMaterial] = useToggle(false);
+  const [isColor, toggleColor] = useToggle(false);
 
   const data = [
     {
@@ -59,8 +74,6 @@ const Product = () => {
 
   return (
     <div className="bg-white w-full h-full p-5">
-      <h1 className="text-xl font-bold mb-4">Quản lý sản phẩm</h1>
-
       <div className="flex justify-between">
         <SearchInput />
         <div className="flex gap-2">
@@ -70,13 +83,22 @@ const Product = () => {
             icon={CirclePlus}
           />
           <ButtonForm name="Kích cỡ" onClick={toggleSize} icon={Ruler} />
-          <ButtonForm name="Danh mục" onClick={toggleSize} icon={LayoutGrid} />
-          <ButtonForm name="Loại dây" onClick={toggleSize} icon={Layers2} />
-          <ButtonForm name="Chất liệu" onClick={toggleSize} icon={Package} />
+          <ButtonForm name="Màu sắc" onClick={toggleColor} icon={Palette} />
+          <ButtonForm
+            name="Danh mục"
+            onClick={toggleCategory}
+            icon={LayoutGrid}
+          />
+          <ButtonForm name="Loại dây" onClick={toggleClosure} icon={Layers2} />
+          <ButtonForm
+            name="Chất liệu"
+            onClick={toggleMaterial}
+            icon={Package}
+          />
         </div>
       </div>
 
-      <TableManyColumn
+      {/* <TableManyColumn
         columns={["Product Name", "Color", "Price"]}
         data={data}
         showEdit
@@ -85,7 +107,7 @@ const Product = () => {
         onEdit={(id) => console.log("Edit", id)}
         onDelete={(id) => console.log("Delete", id)}
         onToggle={(id, enabled) => console.log("Toggle", id, enabled)}
-      />
+      /> */}
       <Pagination
         currentPage={page}
         totalItems={33}
@@ -94,6 +116,10 @@ const Product = () => {
         onPageChange={(newPage) => setPage(newPage)}
       />
       {isSize && <Size onClose={toggleSize} />}
+      {isCategory && <Category onClose={toggleCategory} />}
+      {isClosure && <Closure onClose={toggleClosure} />}
+      {isMaterial && <Material onClose={toggleMaterial} />}
+      {isColor && <Color onClose={toggleColor} />}
     </div>
   );
 };

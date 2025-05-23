@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import TableOneColumn from "../../../components/admin/ui/TableOneColumn";
 import { sizeSchema } from "../../../validator/sizeSchema";
 import ValidatedInput, {
@@ -33,7 +33,7 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
   const [toastMessage, setToastMessage] = useState("");
   const { pagination, setPage, updatePagination } = usePagination(1, 6);
 
-  const fetchSizes = async () => {
+  const fetchSizes = useCallback(async () => {
     const response = await fetchSizesAPI(pagination.page);
     if (response?.data) {
       setSizes(response.data.data);
@@ -44,11 +44,11 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
         limit: response.data.limit,
       });
     }
-  };
+  }, [pagination.page, updatePagination]);
 
   useEffect(() => {
     fetchSizes();
-  }, [pagination.page]);
+  }, [fetchSizes]);
 
   const handleAddSize = async (e: React.FormEvent) => {
     e.preventDefault();
