@@ -1,14 +1,23 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import userImage from "../../../assets/admin/user-1.jpg";
 import { User } from "lucide-react";
 import NavItem from "../ui/NavItem";
+import useAuth from "../../../hooks/useAuth";
 
 const AdminHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleOpenDropdown = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/auth/admin/login");
   };
 
   useEffect(() => {
@@ -28,7 +37,7 @@ const AdminHeader = () => {
   }, []);
 
   return (
-    <div className=" container flex justify-between p-2">
+    <div className="container flex justify-between p-2">
       <div></div>
       <div className="relative" ref={dropdownRef}>
         <button
@@ -57,7 +66,10 @@ const AdminHeader = () => {
             />
           </div>
 
-          <button className="w-full border border-blue-400 text-blue-500 rounded-md py-2 hover:bg-blue-50 transition">
+          <button
+            onClick={handleLogout}
+            className="w-full border border-blue-400 text-blue-500 rounded-md py-2 hover:bg-blue-50 transition"
+          >
             Đăng xuất
           </button>
         </div>

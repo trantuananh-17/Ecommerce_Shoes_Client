@@ -49,6 +49,7 @@ const Brand = () => {
 
   const onToggle = async (id: string, isActive: boolean) => {
     const response = await updateActiveBrandAPI(id, !isActive);
+    console.log(isActive);
 
     if (response?.status_code === 200 || response?.status_code === 201) {
       setToastMessage(response.message);

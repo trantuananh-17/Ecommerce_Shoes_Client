@@ -11,6 +11,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, label, icon: Icon }) => {
   return (
     <NavLink
       to={to}
+      end={to === "/admin"}
       className={({ isActive }) =>
         `flex w-full items-center gap-2 px-3 py-3 rounded  transition-colors ${
           isActive

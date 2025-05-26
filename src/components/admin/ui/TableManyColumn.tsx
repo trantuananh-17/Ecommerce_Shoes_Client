@@ -35,7 +35,7 @@ const TableManyColumn: React.FC<TableProps> = ({
 }) => {
   const handleToggle = (id: string, currentActive: boolean) => {
     if (onToggle) {
-      onToggle(id, !currentActive);
+      onToggle(id, currentActive);
     }
   };
 
@@ -84,7 +84,7 @@ const TableManyColumn: React.FC<TableProps> = ({
                       <input
                         type="checkbox"
                         checked={isEnabled}
-                        onChange={() => handleToggle(row.id, !isEnabled)}
+                        onChange={() => handleToggle(row.id, !!isEnabled)}
                         className="sr-only peer"
                         aria-label={`Toggle enabled for ${row.id}`}
                       />

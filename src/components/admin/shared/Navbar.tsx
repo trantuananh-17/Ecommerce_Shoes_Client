@@ -16,7 +16,7 @@ const Navbar = () => {
     <div className="w-60 h-screen p-4 border-r border-gray-300">
       <img src={logo} className="mb-4" />
       <span className="font-semibold px-3 py-2 block">Tổng quan</span>
-      <NavItem to="/admin/dashboard" label="Dashboard" icon={LayoutDashboard} />
+      <NavItem to="/admin" label="Dashboard" icon={LayoutDashboard} />
       <span className="font-semibold px-3 py-2 block">Sản phẩm</span>
       <NavItem
         to="/admin/product"

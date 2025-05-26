@@ -12,8 +12,8 @@ import Product from "../pages/admin/Product";
 
 const AdminRouter = (
   <Route path="/admin" element={<AdminLayout />}>
-    <Route path="change-password" element={<ChangePassword />} />
     <Route path="dashboard" element={<Dashboard />} />
+    <Route path="change-password" element={<ChangePassword />} />
     <Route path="product" element={<Product />} />
     <Route path="brand" element={<Brand />} />
     <Route path="discount" element={<Discount />} />

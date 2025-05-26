@@ -1,5 +1,9 @@
+import useAuth from "../../hooks/useAuth";
+
 const User = () => {
-  return <div>User</div>;
+  const { authState } = useAuth();
+  const { user } = authState;
+  return <div>{user?.fullname}</div>;
 };
 
 export default User;
