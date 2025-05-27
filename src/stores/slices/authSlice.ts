@@ -10,14 +10,12 @@ export type Profile = {
 };
 
 interface AuthState {
-  access_token: string | null;
-  user: null | Profile;
+  user: Profile | null;
   isAuthenticated: boolean;
   authLoaded: boolean;
 }
 
 const initialState: AuthState = {
-  access_token: null,
   user: null,
   isAuthenticated: false,
   authLoaded: false,
@@ -28,25 +26,22 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     updateAuthState(
-      authState,
+      state,
       action: PayloadAction<{
-        access_token: string | null;
         user: Profile | null;
       }>
     ) {
-      authState.isAuthenticated = true;
-      authState.access_token = action.payload.access_token;
-      authState.user = action.payload.user;
+      state.isAuthenticated = !!action.payload.user;
+      state.user = action.payload.user;
     },
 
-    logoutState(authState) {
-      authState.access_token = null;
-      authState.isAuthenticated = false;
-      authState.user = null;
+    logoutState(state) {
+      state.isAuthenticated = false;
+      state.user = null;
     },
 
-    setAuthLoaded(authState) {
-      authState.authLoaded = true;
+    setAuthLoaded(state) {
+      state.authLoaded = true;
     },
   },
 });

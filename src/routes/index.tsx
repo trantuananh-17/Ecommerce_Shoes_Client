@@ -10,36 +10,32 @@ import DiscountEvent from "../pages/admin/DiscountEvent";
 import WordBanned from "../pages/admin/WordBanned";
 import Order from "../pages/admin/Order";
 import User from "../pages/admin/User";
-import ProtectedRoute from "../components/admin/shared/ProtectedRoute";
+import ProtectedRoute from "../components/shared/ProtectedRoute";
 
 const AppRoutes: RouteObject[] = [
+  { path: "/auth/login", element: <Login /> },
+
   {
     path: "/admin",
-    element: (
-      <ProtectedRoute requiredRole="admin">
-        <AdminLayout />
-      </ProtectedRoute>
-    ),
+    element: <ProtectedRoute allowedRoles={["admin", "user"]} />,
     children: [
       {
-        index: true,
-        element: (
-          <ProtectedRoute requiredRole="admin">
-            <Dashboard />
-          </ProtectedRoute>
-        ),
+        path: "",
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: "product", element: <Product /> },
+          { path: "change-password", element: <ChangePassword /> },
+          { path: "brand", element: <Brand /> },
+          { path: "discount", element: <Discount /> },
+          { path: "event", element: <DiscountEvent /> },
+          { path: "order", element: <Order /> },
+          { path: "user", element: <User /> },
+          { path: "word", element: <WordBanned /> },
+        ],
       },
-      { path: "product", element: <Product /> },
-      { path: "change-password", element: <ChangePassword /> },
-      { path: "brand", element: <Brand /> },
-      { path: "discount", element: <Discount /> },
-      { path: "event", element: <DiscountEvent /> },
-      { path: "order", element: <Order /> },
-      { path: "user", element: <User /> },
-      { path: "word", element: <WordBanned /> },
     ],
   },
-  { path: "/auth/admin/login", element: <Login /> },
 ];
 
 export default AppRoutes;

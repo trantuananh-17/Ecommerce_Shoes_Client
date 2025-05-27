@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseURL } from "../api/client";
+import { baseURL } from "../api/apiClient";
 import { apiRequest } from "../api/apiRequest";
 const auth = axios.create({ baseURL });
 

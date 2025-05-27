@@ -3,7 +3,7 @@ import type { AxiosResponse } from "axios";
 
 export const apiRequest = async <T>(
   promise: Promise<AxiosResponse<T>>
-): Promise<T | null> => {
+): Promise<T> => {
   try {
     const response = await promise;
     return response.data;
@@ -31,7 +31,7 @@ export const apiRequest = async <T>(
     }
 
     console.error("API request error:", message);
-  }
 
-  return null;
+    throw error;
+  }
 };

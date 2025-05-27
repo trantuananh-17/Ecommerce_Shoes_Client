@@ -7,7 +7,7 @@ import {
 } from "../stores/slices/authSlice";
 import { apiRequest } from "../api/apiRequest";
 import axios from "axios";
-import { baseURL } from "../api/client";
+import { baseURL } from "../api/apiClient";
 const auth = axios.create({ baseURL });
 
 type UserInfo = {
