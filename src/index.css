@@ -11,6 +11,31 @@
   --breakpoint-sm: 768px;
   --breakpoint-md: 1024px;
   --breakpoint-lg: 1280px;
+
+  --animate-zoomIn: zoomIn 0.8s ease-out;
+  --animate-slideInLeft: slideInLeft 0.8s ease-out backwards;
+
+  @keyframes zoomIn {
+    0% {
+      opacity: 0;
+      transform: scale(1.2);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideInLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(-150px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 }
 
 body {
