@@ -11,13 +11,14 @@ import WordBanned from "../pages/admin/WordBanned";
 import Order from "../pages/admin/Order";
 import User from "../pages/admin/User";
 import ProtectedRoute from "../components/shared/ProtectedRoute";
+import LandingPage from "../pages/user/LandingPage";
 
 const AppRoutes: RouteObject[] = [
   { path: "/auth/login", element: <Login /> },
 
   {
     path: "/admin",
-    element: <ProtectedRoute allowedRoles={["admin", "user"]} />,
+    element: <ProtectedRoute allowedRoles={["admin"]} />,
     children: [
       {
         path: "",
@@ -35,6 +36,11 @@ const AppRoutes: RouteObject[] = [
         ],
       },
     ],
+  },
+
+  {
+    path: "/",
+    element: <LandingPage />,
   },
 ];
 

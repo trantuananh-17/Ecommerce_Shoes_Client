@@ -20,7 +20,7 @@
 // };
 
 // services/sizeService.ts
-import { auth } from "../api/axiosInterceptor"; // ✅ Dùng lại instance có interceptor
+import { auth } from "../api/axiosInterceptor";
 import { apiRequest } from "../api/apiRequest";
 
 export const fetchSizesAPI = async (page = 1, limit = 6) => {

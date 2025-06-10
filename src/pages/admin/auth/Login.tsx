@@ -45,25 +45,27 @@ const Login = () => {
   }, [authState, navigate]);
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <FormInput
-          label="Email"
-          onChange={handleChange("email")}
-          value={email}
-        />
-        <FormInput
-          label="Password"
-          onChange={handleChange("password")}
-          value={password}
-        />
+    <div className="bg-blue-50 w-full h-screen flex justify-center items-center">
+      <div className="bg-white p-10 rounded-2xl">
+        <form onSubmit={handleSubmit}>
+          <FormInput
+            label="Email"
+            onChange={handleChange("email")}
+            value={email}
+          />
+          <FormInput
+            label="Password"
+            onChange={handleChange("password")}
+            value={password}
+          />
 
-        <button name="Login" type="submit">
-          Login
-        </button>
-      </form>
+          <button name="Login" type="submit">
+            Login
+          </button>
+        </form>
+      </div>
       {toastError && <ToastError message={toastMessage} />}
-    </>
+    </div>
   );
 };
 

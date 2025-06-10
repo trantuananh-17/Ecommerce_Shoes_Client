@@ -1,1 +1,42 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+@font-face {
+  font-family: Jakarta;
+  src: url("../src/assets/fonts/PlusJakartaSans-Regular.ttf");
+}
+
 @import "tailwindcss";
+
+@theme {
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1280px;
+}
+
+body {
+  font-family: "Jakarta", sans-serif;
+}
+
+:root {
+  /* Khoảng cách */
+  --spacing-5: 1.25rem;
+
+  /* Kích thước */
+  --full: 100%;
+  --max-width: 1480px;
+}
+
+@layer components {
+  .container {
+    width: var(--full);
+    max-width: var(--max-width);
+    padding-inline: var(--spacing-5);
+    margin-inline: auto;
+  }
+
+  .image {
+    max-width: var(--full);
+    display: block;
+    object-fit: cover;
+  }
+}

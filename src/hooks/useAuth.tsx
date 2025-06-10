@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-// import useClient from "./useClient";
 import {
   getAuthState,
   logoutState,
@@ -57,7 +56,6 @@ const useAuth = () => {
         dispatch(
           updateAuthState({
             user,
-            access_token: token.access_token,
           })
         );
 
