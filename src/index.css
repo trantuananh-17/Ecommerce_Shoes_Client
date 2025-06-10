@@ -40,11 +40,12 @@
 
 body {
   font-family: "Jakarta", sans-serif;
+  background: white;
 }
 
 :root {
   /* Khoảng cách */
-  --spacing-5: 1.25rem;
+  --spacing-5: 3rem;
 
   /* Kích thước */
   --full: 100%;

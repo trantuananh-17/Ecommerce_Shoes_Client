@@ -1,11 +1,17 @@
 import Banner from "../../components/user/Landing/Banner";
-import Header from "../../components/user/Shared/Header";
+import Benefits from "../../components/user/Landing/Benefits";
+import BestSeller from "../../components/user/Landing/BestSeller";
+import DiscountCode from "../../components/user/Landing/DiscountCode";
+import NewProduct from "../../components/user/Landing/NewProduct";
 
 const LandingPage = () => {
   return (
     <div className="wrap">
-      <Header />
       <Banner />
+      <Benefits />
+      <DiscountCode />
+      <BestSeller />
+      <NewProduct />
     </div>
   );
 };
