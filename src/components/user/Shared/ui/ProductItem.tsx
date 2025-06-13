@@ -4,12 +4,29 @@ import ico_star from "../../../../assets/images/ico_star_active.png";
 import ico_star_gray from "../../../../assets/images/ico_star_gray.png";
 
 interface Props {
-  image: string;
+  id: string;
+  name: string;
+  price: number;
+  discountedPrice: number;
+  isDiscounted: boolean;
+  discountPercentage: number;
+  averageRating: number;
+  sizesWithQuantity: number;
+  thumbnail: string;
 }
 
-const ProductItem: React.FC<Props> = ({ image }) => {
+const ProductItem: React.FC<Props> = ({
+  thumbnail,
+  name,
+  price,
+  discountedPrice,
+}) => {
+  const click = () => {
+    console.log(click);
+  };
+
   return (
-    <li className="mt-6 md:mt-0 text-center group relative">
+    <li onClick={click} className="mt-6 md:mt-0 text-center group relative">
       <a href="product-detail.html" className="bg-red">
         <span className="absolute py-1 text-xs px-2 top-3 left-3 bg-black text-white rounded-xl">
           Out of stock
@@ -44,7 +61,7 @@ const ProductItem: React.FC<Props> = ({ image }) => {
         <div className="rounded-xl overflow-hidden bg-white lg:h-[385px]">
           <img
             className="block size-full object-cover image"
-            src={image}
+            src={thumbnail}
             alt=""
           />
         </div>
@@ -55,14 +72,16 @@ const ProductItem: React.FC<Props> = ({ image }) => {
           <img className="size-[13px] " src={ico_star} alt="" />
           <img className="size-[13px] " src={ico_star_gray} alt="" />
         </div>
-        <h3 className="text-15 mt-2">Egg Dining Table</h3>
+        <h3 className="text-15 mt-2">{name}</h3>
       </a>
       <div className="mt-2 relative h-5 overflow-hidden">
         <a href="product-detail.html" className="bg-red"></a>
         <div className="absolute left-1/2 -translate-x-1/2 group-hover:bottom-0 -bottom-5 transition-all duration-300">
           <a href="product-detail.html" className="bg-red">
             <div className="flex items-center justify-center font-bold text-[14px] text-center">
-              <span className="">$70.00</span>
+              <span className="">
+                {price} - {discountedPrice}
+              </span>
             </div>
           </a>
           <a

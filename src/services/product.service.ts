@@ -1,0 +1,21 @@
+import { apiRequest } from "../api/apiRequest";
+import { auth } from "../api/axiosInterceptor";
+
+export const fetchListDiscountedProductAPI = async (page = 1, limit = 4) => {
+  return await apiRequest(
+    auth.get(
+      `/products?page=${page}&limit=${limit}&sortBy=discounted_price_asc`,
+      {
+        headers: { "Cache-Control": "no-cache", "Accept-Language": "en" },
+      }
+    )
+  );
+};
+
+export const fetchListNewProductAPI = async (page = 1, limit = 4) => {
+  return await apiRequest(
+    auth.get(`/products?page=${page}&limit=${limit}&sortBy=createdAt_desc`, {
+      headers: { "Cache-Control": "no-cache", "Accept-Language": "vi" },
+    })
+  );
+};

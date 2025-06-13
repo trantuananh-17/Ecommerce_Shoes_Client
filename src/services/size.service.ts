@@ -23,7 +23,7 @@
 import { auth } from "../api/axiosInterceptor";
 import { apiRequest } from "../api/apiRequest";
 
-export const fetchSizesAPI = async (page = 1, limit = 6) => {
+export const fetchSizesAPI = async (page = 1, limit = 15) => {
   return await apiRequest(
     auth.get(`/sizes?page=${page}&limit=${limit}`, {
       headers: { "Cache-Control": "no-cache" },
