@@ -19,3 +19,11 @@ export const fetchListNewProductAPI = async (page = 1, limit = 4) => {
     })
   );
 };
+
+export const fetchDetailProducttAPI = async (slug: string) => {
+  return await apiRequest(
+    auth.get(`/products/slug/${slug}`, {
+      headers: { "Cache-Control": "no-cache", "Accept-Language": "vi" },
+    })
+  );
+};

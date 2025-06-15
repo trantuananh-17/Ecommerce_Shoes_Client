@@ -7,8 +7,6 @@ import ProductContext from "../../../context/ProductContext";
 const ListProduct = () => {
   const bestSellerList = useContext(ProductContext);
 
-  console.log(bestSellerList);
-
   if (!bestSellerList || bestSellerList.length === 0) {
     return <p className="text-center py-10">No bestseller products found.</p>;
   }

@@ -5,19 +5,13 @@ import { useToggle } from "../../hooks/useToggle";
 import Size from "./other/Size";
 import SearchInput from "../../components/admin/ui/SearchInput";
 import ButtonForm from "../../components/admin/ui/ButtonForm";
-import {
-  CirclePlus,
-  Layers2,
-  LayoutGrid,
-  Package,
-  Palette,
-  Ruler,
-} from "lucide-react";
+
 import Category from "./other/Category";
 import Closure from "./other/Closure";
 import Material from "./other/Material";
 import Color from "./other/Color";
 import DropDownButtonOther from "../../components/admin/ui/DropDownButtonOther";
+import { CirclePlus } from "lucide-react";
 
 const Product = () => {
   const [isSize, toggleSize] = useToggle(false);
@@ -39,7 +33,7 @@ const Product = () => {
           onChange={setInputQuery}
           onSearch={() => setSearchQuery(inputQuery)}
         />
-        <div className="flex gap-2 ">
+        <div className="flex gap-2">
           <DropDownButtonOther
             toggleColor={toggleColor}
             toggleCategory={toggleCategory}
