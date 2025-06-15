@@ -93,45 +93,50 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
       <div className="absolute inset-0 bg-black opacity-50" />
 
       <div
-        className="relative bg-white p-6 rounded-xl shadow-lg w-[40%] h-[80%] z-10"
+        className="relative bg-white p-6 rounded-xl shadow-lg w-[40%] h-[80%] z-10 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-3">Quản lý kích cỡ</h2>
 
-        <form
-          className="mb-2 flex items-end gap-4 content-center"
-          onSubmit={handleAddSize}
-        >
-          <ValidatedInput
-            key={`size-${inputKey}`}
-            ref={inputRef}
-            placeholder="Kích cỡ"
-            schema={sizeSchema}
-            value={newSize}
-            onChange={setNewSize}
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded "
-          >
-            Thêm
-          </button>
-        </form>
+        <div className="flex flex-col h-full">
+          <form className="mb-2 flex items-end gap-4" onSubmit={handleAddSize}>
+            <ValidatedInput
+              key={`size-${inputKey}`}
+              ref={inputRef}
+              placeholder="Kích cỡ"
+              schema={sizeSchema}
+              value={newSize}
+              onChange={setNewSize}
+            />
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Thêm
+            </button>
+          </form>
 
-        <TableOneColumn
-          data={sizes}
-          title="Kích cỡ"
-          showDelete={true}
-          onDelete={(id) => handleDeleteSize(id)}
-        />
+          {/* Đây là phần cần scroll */}
+          <div className="flex-1 overflow-y-auto">
+            <TableOneColumn
+              data={sizes}
+              title="Kích cỡ"
+              showDelete={true}
+              onDelete={(id) => handleDeleteSize(id)}
+            />
+          </div>
 
-        <Pagination
-          currentPage={pagination.page}
-          totalItems={pagination.totalDocs}
-          pageSize={pagination.limit}
-          column={false}
-          onPageChange={setPage}
-        />
+          {/* Pagination luôn nằm bên dưới card */}
+          <div className="mb-10">
+            <Pagination
+              currentPage={pagination.page}
+              totalItems={pagination.totalDocs}
+              pageSize={pagination.limit}
+              column={false}
+              onPageChange={setPage}
+            />
+          </div>
+        </div>
 
         {toastSuccess && <ToastSuccess message={toastMessage} />}
         {toastError && <ToastError message={toastMessage} />}

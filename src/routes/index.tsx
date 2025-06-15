@@ -13,6 +13,10 @@ import User from "../pages/admin/User";
 import ProtectedRoute from "../components/shared/ProtectedRoute";
 import LandingPage from "../pages/user/LandingPage";
 import UserLayout from "../components/user/Layout/UserLayout";
+import ListProduct from "../pages/user/ListProduct";
+import ProductDetail from "../pages/user/ProductDetail";
+import NotFoundPage from "../pages/user/NotFoundPage";
+import StatusLayout from "../components/user/Layout/StatusLayout";
 
 const AppRoutes: RouteObject[] = [
   { path: "/auth/login", element: <Login /> },
@@ -40,9 +44,19 @@ const AppRoutes: RouteObject[] = [
   },
 
   {
-    path: "/",
+    path: "",
     element: <UserLayout />,
-    children: [{ index: true, element: <LandingPage /> }],
+    children: [
+      { index: true, element: <LandingPage /> },
+      { path: "products", element: <ListProduct /> },
+      { path: "product/:slug", element: <ProductDetail /> },
+    ],
+  },
+
+  {
+    path: "error",
+    element: <StatusLayout />,
+    children: [{ path: "not-found", element: <NotFoundPage /> }],
   },
 ];
 
