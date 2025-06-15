@@ -12,11 +12,14 @@ import Order from "../pages/admin/Order";
 import User from "../pages/admin/User";
 import ProtectedRoute from "../components/shared/ProtectedRoute";
 import LandingPage from "../pages/user/LandingPage";
-import UserLayout from "../components/user/Layout/UserLayout";
 import ListProduct from "../pages/user/ListProduct";
 import ProductDetail from "../pages/user/ProductDetail";
 import NotFoundPage from "../pages/user/NotFoundPage";
-import StatusLayout from "../components/user/Layout/StatusLayout";
+import UserLayout from "../Layout/UserLayout";
+import StatusLayout from "../Layout/StatusLayout";
+import LoginPage from "../pages/user/auth/LoginPage";
+import AuthLayout from "../Layout/AuthLayout";
+import RegisterPage from "../pages/user/auth/RegisterPage";
 
 const AppRoutes: RouteObject[] = [
   { path: "/auth/login", element: <Login /> },
@@ -50,6 +53,15 @@ const AppRoutes: RouteObject[] = [
       { index: true, element: <LandingPage /> },
       { path: "products", element: <ListProduct /> },
       { path: "product/:slug", element: <ProductDetail /> },
+    ],
+  },
+
+  {
+    path: "",
+    element: <AuthLayout />,
+    children: [
+      { path: "login", element: <LoginPage /> },
+      { path: "register", element: <RegisterPage /> },
     ],
   },
 

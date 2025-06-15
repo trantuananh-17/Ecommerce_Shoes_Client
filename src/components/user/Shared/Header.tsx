@@ -35,10 +35,10 @@ const Header = () => {
               <NavLink to="/">Shop</NavLink>
             </li>
             <li className="relative after:absolute after:h-[1.5px] after:bg-black after:left-0 after:bottom-[-2px] after:transition-all after:duration-300 after:w-full after:scale-x-0 hover:after:-scale-x-100">
-              <NavLink to="/">Blog</NavLink>
+              <NavLink to="/">About</NavLink>
             </li>
             <li className="relative after:absolute after:h-[1.5px] after:bg-black after:left-0 after:bottom-[-2px] after:transition-all after:duration-300 after:w-full after:scale-x-0 hover:after:-scale-x-100">
-              <NavLink to="/">Fetured</NavLink>
+              <NavLink to="/">Contact</NavLink>
             </li>
           </ul>
         </nav>
@@ -46,9 +46,9 @@ const Header = () => {
           <a href="#none" className="lg:hidden">
             <img className="size-5" src={ico_search} alt="" />
           </a>
-          <a href="login.html">
+          <NavLink to={"/login"}>
             <img className="size-5" src={ico_user} alt="" />
-          </a>
+          </NavLink>
           <a href="#none" className="relative">
             <span className="absolute -top-[8px] -right-[10px] size-[18px] bg-black text-white rounded-full text-xs grid place-items-center">
               10
