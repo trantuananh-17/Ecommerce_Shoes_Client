@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Footer from "../Shared/Footer";
-import Header from "../Shared/Header";
+import Header from "../components/user/Shared/Header";
+import Footer from "../components/user/Shared/Footer";
 
 const StatusLayout = () => {
   return (

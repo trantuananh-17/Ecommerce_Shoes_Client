@@ -4,8 +4,12 @@ import ico_search from "../../../assets/images/ico_search.png";
 import ico_bag from "../../../assets/images/ico_bag.png";
 import ico_user from "../../../assets/images/ico_user.png";
 import ico_heart from "../../../assets/images/ico_heart.png";
+import { useSelector } from "react-redux";
+import { getCartState } from "../../../stores/slices/cartSlice";
 
 const Header = () => {
+  const { cartLoaded, totalQuantity } = useSelector(getCartState);
+
   return (
     <header className="py-5 lg:py-8 sticky top-0 z-10 bg-white shadow-lg">
       <div className="container flex items-center">
@@ -35,10 +39,10 @@ const Header = () => {
               <NavLink to="/">Shop</NavLink>
             </li>
             <li className="relative after:absolute after:h-[1.5px] after:bg-black after:left-0 after:bottom-[-2px] after:transition-all after:duration-300 after:w-full after:scale-x-0 hover:after:-scale-x-100">
-              <NavLink to="/">Blog</NavLink>
+              <NavLink to="/">About</NavLink>
             </li>
             <li className="relative after:absolute after:h-[1.5px] after:bg-black after:left-0 after:bottom-[-2px] after:transition-all after:duration-300 after:w-full after:scale-x-0 hover:after:-scale-x-100">
-              <NavLink to="/">Fetured</NavLink>
+              <NavLink to="/">Contact</NavLink>
             </li>
           </ul>
         </nav>
@@ -46,9 +50,9 @@ const Header = () => {
           <a href="#none" className="lg:hidden">
             <img className="size-5" src={ico_search} alt="" />
           </a>
-          <a href="login.html">
+          <NavLink to={"/login"}>
             <img className="size-5" src={ico_user} alt="" />
-          </a>
+          </NavLink>
           <a href="#none" className="relative">
             <span className="absolute -top-[8px] -right-[10px] size-[18px] bg-black text-white rounded-full text-xs grid place-items-center">
               10
@@ -57,7 +61,7 @@ const Header = () => {
           </a>
           <a href="shopping-cart.html" className="relative">
             <span className="absolute -top-[8px] -right-[10px] size-[18px] bg-black text-white rounded-full text-xs grid place-items-center">
-              3
+              {cartLoaded ? totalQuantity : 0}
             </span>
             <img className="size-5" src={ico_bag} alt="" />
           </a>

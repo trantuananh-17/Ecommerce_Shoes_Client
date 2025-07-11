@@ -6,7 +6,7 @@ import {
 } from "../stores/slices/authSlice";
 import { apiRequest } from "../api/apiRequest";
 import axios from "axios";
-import { baseURL } from "../api/apiClient";
+import { baseURL, setAccessToken } from "../api/apiClient";
 const auth = axios.create({ baseURL });
 
 type UserInfo = {
@@ -39,12 +39,13 @@ const useAuth = () => {
           withCredentials: true,
         })
       );
-      console.log("API response:", res);
 
       const userData = res?.data;
       const token = userData?.token;
 
       if (token?.access_token && userData) {
+        setAccessToken(token.access_token);
+
         const user = {
           id: userData.id,
           email: userData.email,
