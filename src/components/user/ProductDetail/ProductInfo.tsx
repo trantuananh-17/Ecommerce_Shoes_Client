@@ -15,6 +15,8 @@ interface Props {
   averageRating: number;
   price: number;
   color: string;
+  material: string;
+  closure: string;
   discountedPrice: number;
   discountPercentage: number;
   sizesWithQuantity: number;
@@ -25,6 +27,8 @@ interface Props {
 const ProductInfo: React.FC<Props> = ({
   name,
   color,
+  material,
+  closure,
   sizes,
   price,
   averageRating,
@@ -76,8 +80,8 @@ const ProductInfo: React.FC<Props> = ({
 
         <div className="flex gap-5">
           <InfoItem title="Màu sắc" name={color} />
-          <InfoItem title="Chất liệu" name={color} />
-          <InfoItem title="Kiểu buộc" name={color} />
+          <InfoItem title="Chất liệu" name={material} />
+          <InfoItem title="Kiểu buộc" name={closure} />
         </div>
 
         <div className=" ">

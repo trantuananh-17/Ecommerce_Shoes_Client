@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
-import Banner from "../../components/user/Landing/Banner";
-import Benefits from "../../components/user/Landing/Benefits";
-import BestSeller from "../../components/user/Landing/BestSeller";
-import DiscountCode from "../../components/user/Landing/DiscountCode";
-import NewProduct from "../../components/user/Landing/NewProduct";
+import Banner from "../../../components/user/Landing/Banner";
+import Benefits from "../../../components/user/Landing/Benefits";
+import BestSeller from "../../../components/user/Landing/BestSeller";
+import DiscountCode from "../../../components/user/Landing/DiscountCode";
+import type { IProductItem } from "../../../types/product.type";
+import { usePagination } from "../../../hooks/usePagination";
 import {
   fetchListDiscountedProductAPI,
   fetchListNewProductAPI,
-} from "../../services/product.service";
-import { usePagination } from "../../hooks/usePagination";
-import type { IProductItem } from "../../types/product.type";
-import ProductContext from "../../context/ProductContext";
+} from "../../../services/product.service";
+import ProductContext from "../../../context/ProductContext";
+import NewProduct from "../../../components/user/Landing/NewProduct";
 
 const LandingPage = () => {
   const { pagination, updatePagination } = usePagination(1, 4);

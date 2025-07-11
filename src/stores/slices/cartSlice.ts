@@ -9,11 +9,13 @@ export type CartItem = {
     en: string;
   };
   size: string;
+  sizeId: string;
   price: number;
   quantity: number;
   thumbnail: string;
-  discountedPrice?: number;
-  totalPrice: number;
+  sizeQuantityId: string;
+  discountedPrice: number;
+  stockQuantity: number;
 };
 
 interface CartState {
@@ -43,13 +45,9 @@ const cartSlice = createSlice({
 
       if (existingItem) {
         existingItem.quantity += action.payload.quantity;
-        existingItem.totalPrice = existingItem.price * existingItem.quantity;
       } else {
         state.items.push(action.payload);
       }
-
-      state.totalQuantity += 1;
-      state.totalPrice += action.payload.totalPrice;
     },
 
     removeFromCart(
@@ -63,9 +61,7 @@ const cartSlice = createSlice({
       );
 
       if (index !== -1) {
-        const item = state.items[index];
         state.totalQuantity -= 1;
-        state.totalPrice -= item.totalPrice;
         state.items.splice(index, 1);
       }
     },
@@ -92,6 +88,25 @@ const cartSlice = createSlice({
       state.totalPrice = 0;
       state.cartLoaded = false;
     },
+
+    updateQuantity(
+      state,
+      action: PayloadAction<{
+        productId: string;
+        size: string;
+        quantity: number;
+      }>
+    ) {
+      const existingItem = state.items.find(
+        (item) =>
+          item.productId === action.payload.productId &&
+          item.size === action.payload.size
+      );
+
+      if (existingItem) {
+        existingItem.quantity = action.payload.quantity;
+      }
+    },
   },
 });
 
@@ -103,6 +118,7 @@ export const {
   setCartSummary,
   setTotalPrices,
   clearCart,
+  updateQuantity,
 } = cartSlice.actions;
 
 export const getCartState = (state: RootState) => state.cart;

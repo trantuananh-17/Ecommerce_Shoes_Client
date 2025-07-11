@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
-import ImagesOverView from "../../components/user/ProductDetail/ImagesOverView";
 import { useCallback, useEffect, useState } from "react";
-import { fetchDetailProducttAPI } from "../../services/product.service";
-import type { IProductDetail } from "../../types/product.type";
-import Breadcrumb from "../../components/user/ProductDetail/ui/Breadcrumb";
-import ProductInfo from "../../components/user/ProductDetail/ProductInfo";
-import ProductTabs from "../../components/user/ProductDetail/ProductTabs";
+import type { IProductDetail } from "../../../types/product.type";
+import { fetchDetailProducttAPI } from "../../../services/product.service";
+import Breadcrumb from "../../../components/user/ProductDetail/ui/Breadcrumb";
+import ImagesOverView from "../../../components/user/ProductDetail/ImagesOverView";
+import ProductInfo from "../../../components/user/ProductDetail/ProductInfo";
+import ProductTabs from "../../../components/user/ProductDetail/ProductTabs";
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -48,6 +48,8 @@ const ProductDetail = () => {
               <ProductInfo
                 name={product.name}
                 color={product.color}
+                material={product.material.name}
+                closure={product.closure}
                 price={product.price}
                 averageRating={product.averageRating}
                 sizesWithQuantity={product.sizesWithQuantity}

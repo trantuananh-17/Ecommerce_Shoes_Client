@@ -11,11 +11,12 @@ import {
 } from "./stores/slices/authSlice";
 import { auth } from "./api/axiosInterceptor";
 import { getAccessToken } from "./api/apiClient";
-import { fetchCartSumaryAPI } from "./services/cart.service";
+import { fetchCartSumaryAPI, fetchDataCartAPI } from "./services/cart.service";
 import {
   setCartItems,
   setCartLoaded,
   setCartSummary,
+  setTotalPrices,
 } from "./stores/slices/cartSlice";
 
 function App() {
@@ -29,13 +30,20 @@ function App() {
       const accessToken = getAccessToken();
 
       if (accessToken) {
-        // Gọi API để lấy thông tin giỏ hàng
-        const cartItemsResponse = await fetchCartSumaryAPI();
-        console.log(cartItemsResponse.data.totalItems);
+        const cartItemsSumaryResponse = await fetchCartSumaryAPI();
+        const cartItemsResponse = await fetchDataCartAPI();
+        console.log(cartItemsResponse.data.result);
 
-        // Lưu tổng giá trị giỏ hàng vào Redux
         dispatch(
-          setCartSummary({ totalQuantity: cartItemsResponse.data.totalItems })
+          setCartSummary({
+            totalQuantity: cartItemsSumaryResponse.data.totalItems,
+          })
+        );
+
+        dispatch(setCartItems(cartItemsResponse.data.result));
+
+        dispatch(
+          setTotalPrices({ totalPrice: cartItemsResponse.data.totalPrices })
         );
         dispatch(setCartLoaded());
       }
