@@ -56,18 +56,31 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
     const isValid = inputRef.current?.validate();
     if (!isValid) return;
 
-    const response = await addSizeAPI(newSize);
-    if (response?.data) {
-      setNewSize("");
-      setInputKey((k) => k + 1);
-      setToastMessage(response.message);
-      setToastSuccess(true);
-      setTimeout(() => setToastSuccess(false), 3000);
-      await fetchSizes();
-    } else {
-      setToastMessage("Thêm kích cỡ thất bại.");
-      setToastError(true);
-      setTimeout(() => setToastError(false), 3000);
+    try {
+      const response = await addSizeAPI(newSize);
+
+      if (response?.data) {
+        setNewSize("");
+        setInputKey((k) => k + 1);
+        setToastMessage(response.message);
+        setToastSuccess(true);
+        setTimeout(() => setToastSuccess(false), 3000);
+        await fetchSizes();
+      } else {
+        setToastMessage("Thêm kích cỡ thất bại.");
+        setToastError(true);
+        setTimeout(() => setToastError(false), 3000);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setToastMessage(error.message);
+        setToastError(true);
+        setTimeout(() => setToastError(false), 3000);
+      } else {
+        setToastMessage("Đã xảy ra lỗi không xác định.");
+        setToastError(true);
+        setTimeout(() => setToastError(false), 3000);
+      }
     }
   };
 
