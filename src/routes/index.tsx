@@ -11,15 +11,16 @@ import WordBanned from "../pages/admin/WordBanned";
 import Order from "../pages/admin/Order";
 import User from "../pages/admin/User";
 import ProtectedRoute from "../components/shared/ProtectedRoute";
-import LandingPage from "../pages/user/LandingPage";
-import ListProduct from "../pages/user/ListProduct";
-import ProductDetail from "../pages/user/ProductDetail";
-import NotFoundPage from "../pages/user/NotFoundPage";
+import ListProduct from "../pages/user/ListProduct/ListProduct";
+import NotFoundPage from "../pages/user/Error/NotFoundPage";
 import UserLayout from "../Layout/UserLayout";
 import StatusLayout from "../Layout/StatusLayout";
 import LoginPage from "../pages/user/auth/LoginPage";
 import AuthLayout from "../Layout/AuthLayout";
 import RegisterPage from "../pages/user/auth/RegisterPage";
+import LandingPage from "../pages/user/Landing/LandingPage";
+import Cart from "../pages/user/Cart/Cart";
+import ProductDetail from "../pages/user/ProductDetail/ProductDetail";
 
 const AppRoutes: RouteObject[] = [
   { path: "/auth/login", element: <Login /> },
@@ -53,6 +54,7 @@ const AppRoutes: RouteObject[] = [
       { index: true, element: <LandingPage /> },
       { path: "products", element: <ListProduct /> },
       { path: "product/:slug", element: <ProductDetail /> },
+      { path: "carts", element: <Cart /> },
     ],
   },
 

@@ -59,12 +59,12 @@ const Header = () => {
             </span>
             <img className="size-5" src={ico_heart} alt="" />
           </a>
-          <a href="shopping-cart.html" className="relative">
+          <NavLink to={"carts"} className="relative">
             <span className="absolute -top-[8px] -right-[10px] size-[18px] bg-black text-white rounded-full text-xs grid place-items-center">
               {cartLoaded ? totalQuantity : 0}
             </span>
             <img className="size-5" src={ico_bag} alt="" />
-          </a>
+          </NavLink>
         </div>
       </div>
     </header>
