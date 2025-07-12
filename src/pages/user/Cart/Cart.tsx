@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
+  clearCart,
   getCartState,
+  setCartDefault,
   setTotalPrices,
   type CartItem,
 } from "../../../stores/slices/cartSlice";
@@ -9,17 +11,24 @@ import { formatCurrency } from "../../../utils/formatCurrency";
 import {
   updateQuantity,
   removeFromCart,
-} from "../../../stores/slices/cartSlice"; // Import các action
+} from "../../../stores/slices/cartSlice";
 import {
   deleteCartItemAPI,
   updateQuantityAPI,
 } from "../../../services/cart.service";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { cartLoaded, totalPrice, items } = useSelector(getCartState);
+  const { cartLoaded, totalPrice, items = [] } = useSelector(getCartState);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const updateTotalPrice = (updatedItems: CartItem[]) => {
+    if (updatedItems.length === 0) {
+      dispatch(setTotalPrices({ totalPrice: 0 }));
+      dispatch(setCartDefault());
+      return;
+    }
     const newTotalPrice = updatedItems.reduce((total, item) => {
       return total + item.discountedPrice * item.quantity;
     }, 0);
@@ -84,16 +93,26 @@ const Cart = () => {
 
   const handleDelete = async (
     productId: string,
-    size: string,
+    sizeId: string,
     sizeQuantityId: string
   ) => {
     await deleteCartItemAPI(sizeQuantityId);
-    dispatch(removeFromCart({ productId, size }));
+
+    dispatch(removeFromCart({ productId, sizeId }));
 
     const updatedItems = items.filter(
-      (item) => item.productId !== productId || item.size !== size
+      (item) => item.productId !== productId || item.sizeId !== sizeId
     );
-    updateTotalPrice(updatedItems);
+
+    if (updatedItems.length === 0) {
+      dispatch(clearCart());
+    } else {
+      updateTotalPrice(updatedItems);
+    }
+  };
+
+  const handleGetProductInfo = async (slug: string) => {
+    navigate(`/product/${slug}`);
   };
 
   return (
@@ -117,7 +136,7 @@ const Cart = () => {
                   <div className="p-5 border border-gray w-1/4 flex items-center justify-center"></div>
                 </div>
 
-                {cartLoaded && items.length > 0 ? (
+                {cartLoaded && items.length >= 0 ? (
                   items.map((item: CartItem) => (
                     <CartItemInfo
                       key={`${item.productId}-${item.size}`}
@@ -125,7 +144,7 @@ const Cart = () => {
                       onDelete={() =>
                         handleDelete(
                           item.productId,
-                          item.size,
+                          item.sizeId,
                           item.sizeQuantityId
                         )
                       }
@@ -153,10 +172,11 @@ const Cart = () => {
                           item.sizeQuantityId
                         )
                       }
+                      onProductInfo={handleGetProductInfo}
                     />
                   ))
                 ) : (
-                  <p>Your cart is empty.</p>
+                  <p className="p-2">Your cart is empty.</p>
                 )}
               </div>
             </div>

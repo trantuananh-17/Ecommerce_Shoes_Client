@@ -9,6 +9,7 @@ interface Props {
   onIncrease: () => void;
   onDecrease: () => void;
   onQuantityChange: (newQuantity: number) => void;
+  onProductInfo: (slug: string) => void;
 }
 
 const CartItemInfo: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const CartItemInfo: React.FC<Props> = ({
   onIncrease,
   onDecrease,
   onQuantityChange,
+  onProductInfo,
 }) => {
   const [inputQuantity, setInputQuantity] = useState(cartItem.quantity);
 
@@ -55,7 +57,12 @@ const CartItemInfo: React.FC<Props> = ({
             <img src={cartItem.thumbnail} alt="Thumbnail ảnh giày" />
           </div>
           <div>
-            <p className="text-xs uppercase">{cartItem.productName}</p>
+            <p
+              className="text-xs uppercase input-2 line-clamp-2"
+              onClick={() => onProductInfo(cartItem.slug)}
+            >
+              {cartItem.productName}
+            </p>
             <span className="text-xs">
               Giá: {formatCurrency(cartItem.discountedPrice)}
             </span>

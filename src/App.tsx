@@ -40,12 +40,14 @@ function App() {
           })
         );
 
-        dispatch(setCartItems(cartItemsResponse.data.result));
+        if (cartItemsResponse && cartItemsResponse.data.result) {
+          dispatch(setCartItems(cartItemsResponse.data.result));
 
-        dispatch(
-          setTotalPrices({ totalPrice: cartItemsResponse.data.totalPrices })
-        );
-        dispatch(setCartLoaded());
+          dispatch(
+            setTotalPrices({ totalPrice: cartItemsResponse.data.totalPrices })
+          );
+          dispatch(setCartLoaded());
+        }
       }
     } catch (error) {
       console.error("Error fetching cart data:", error);

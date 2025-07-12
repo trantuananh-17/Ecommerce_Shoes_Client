@@ -46,6 +46,7 @@ const ProductDetail = () => {
               />
 
               <ProductInfo
+                id={product.id}
                 name={product.name}
                 color={product.color}
                 material={product.material.name}

@@ -4,10 +4,7 @@ import type { RootState } from "../store";
 export type CartItem = {
   productId: string;
   productName: string;
-  slug: {
-    vi: string;
-    en: string;
-  };
+  slug: string;
   size: string;
   sizeId: string;
   price: number;
@@ -17,6 +14,13 @@ export type CartItem = {
   discountedPrice: number;
   stockQuantity: number;
 };
+
+export interface addCartItem {
+  productId: string;
+  sizeId: string;
+  quantity: number;
+  totalQuantity: number;
+}
 
 interface CartState {
   items: CartItem[];
@@ -36,28 +40,29 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart(state, action: PayloadAction<CartItem>) {
+    addToCart(state, action: PayloadAction<addCartItem>) {
       const existingItem = state.items.find(
         (item) =>
           item.productId === action.payload.productId &&
-          item.size === action.payload.size
+          item.sizeId === action.payload.sizeId
       );
 
       if (existingItem) {
         existingItem.quantity += action.payload.quantity;
+        state.totalQuantity = action.payload.totalQuantity;
       } else {
-        state.items.push(action.payload);
+        state.totalQuantity = action.payload.totalQuantity + 1;
       }
     },
 
     removeFromCart(
       state,
-      action: PayloadAction<{ productId: string; size: string }>
+      action: PayloadAction<{ productId: string; sizeId: string }>
     ) {
       const index = state.items.findIndex(
         (item) =>
           item.productId === action.payload.productId &&
-          item.size === action.payload.size
+          item.sizeId === action.payload.sizeId
       );
 
       if (index !== -1) {
@@ -80,6 +85,10 @@ const cartSlice = createSlice({
 
     setCartLoaded(state) {
       state.cartLoaded = true;
+    },
+
+    setCartDefault(state) {
+      state.cartLoaded = false;
     },
 
     clearCart(state) {
@@ -114,6 +123,7 @@ export const {
   addToCart,
   removeFromCart,
   setCartLoaded,
+  setCartDefault,
   setCartItems,
   setCartSummary,
   setTotalPrices,

@@ -1,5 +1,6 @@
 import { apiRequest } from "../api/apiRequest";
 import { auth } from "../api/axiosInterceptor";
+import type { addCartItem } from "../stores/slices/cartSlice";
 
 interface updateCartItem {
   sizeQuantityId: string;
@@ -20,6 +21,10 @@ export const fetchDataCartAPI = async () => {
       headers: { "Cache-Control": "no-cache", "Accept-Language": "vi" },
     })
   );
+};
+
+export const addToCartAPI = async (item: addCartItem) => {
+  return await apiRequest(auth.post(`/carts`, item));
 };
 
 export const updateQuantityAPI = async (item: updateCartItem) => {
