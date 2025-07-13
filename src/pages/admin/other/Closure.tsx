@@ -1,23 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import type { ValidatedInputRef } from "../../../components/admin/ui/ValidatedInput";
+import type { ValidatedInputRef } from "../../../components/admin/ui/input/ValidatedInput";
 import { usePagination } from "../../../hooks/usePagination";
 import Pagination from "../../../components/admin/ui/Pagination";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
-import TableManyColumn from "../../../components/admin/ui/TableManyColumn";
+import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
 import {
   fetchClosureByAdminAPI,
   addClosureAPI,
   updateClosureAPI,
 } from "../../../services/closure.service";
-import ValidatedInput from "../../../components/admin/ui/ValidatedInput";
+import ValidatedInput from "../../../components/admin/ui/input/ValidatedInput";
 import {
   closureEnSchema,
   closureViSchema,
   descriptionEnSchema,
   descriptionViSchema,
 } from "../../../validator/closureSchema";
-import ValidatedAria from "../../../components/admin/ui/ValidatedAria";
+import ValidatedAria from "../../../components/admin/ui/input/ValidatedAria";
 
 type Props = {
   onClose: () => void;

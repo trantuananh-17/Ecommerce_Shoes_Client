@@ -1,17 +1,17 @@
 import { useState } from "react";
-import Pagination from "../../components/admin/ui/Pagination";
-import TableManyColumn from "../../components/admin/ui/TableManyColumn";
-import { useToggle } from "../../hooks/useToggle";
-import Size from "./other/Size";
-import SearchInput from "../../components/admin/ui/SearchInput";
-import ButtonForm from "../../components/admin/ui/ButtonForm";
+import Pagination from "../../../components/admin/ui/Pagination";
+import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
+import { useToggle } from "../../../hooks/useToggle";
+import Size from "../other/Size";
+import ButtonForm from "../../../components/admin/ui/button/ButtonForm";
 
-import Category from "./other/Category";
-import Closure from "./other/Closure";
-import Material from "./other/Material";
-import Color from "./other/Color";
-import DropDownButtonOther from "../../components/admin/ui/DropDownButtonOther";
+import Category from "../other/Category";
+import Closure from "../other/Closure";
+import Material from "../other/Material";
+import Color from "../other/Color";
+import DropDownButtonOther from "../../../components/admin/ui/button/DropDownButtonOther";
 import { CirclePlus } from "lucide-react";
+import SearchInput from "../../../components/admin/ui/input/SearchInput";
 
 const Product = () => {
   const [isSize, toggleSize] = useToggle(false);

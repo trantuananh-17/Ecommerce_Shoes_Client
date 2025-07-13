@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import FormInput from "../../../components/admin/ui/FormInput";
+import FormInput from "../../../components/admin/ui/input/FormInput";
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ToastError from "../../../components/shared/ToastError";

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import TableOneColumn from "../../../components/admin/ui/TableOneColumn";
+import TableOneColumn from "../../../components/admin/ui/table/TableOneColumn";
 import { sizeSchema } from "../../../validator/sizeSchema";
 import ValidatedInput, {
   type ValidatedInputRef,
-} from "../../../components/admin/ui/ValidatedInput";
+} from "../../../components/admin/ui/input/ValidatedInput";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
 import Pagination from "../../../components/admin/ui/Pagination";

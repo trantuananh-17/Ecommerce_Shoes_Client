@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import ButtonSearch from "./ButtonSearch";
+import ButtonSearch from "../button/ButtonSearch";
 
 interface SearchInputProps {
   value: string;
