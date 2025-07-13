@@ -31,7 +31,7 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
   const [toastSuccess, setToastSuccess] = useState(false);
   const [toastError, setToastError] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const { pagination, setPage, updatePagination } = usePagination(1, 6);
+  const { pagination, setPage, updatePagination } = usePagination(1, 8);
 
   const fetchSizes = useCallback(async () => {
     const response = await fetchSizesAPI(pagination.page);
@@ -106,7 +106,7 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
       <div className="absolute inset-0 bg-black opacity-50" />
 
       <div
-        className="relative bg-white p-6 rounded-xl shadow-lg w-[40%] h-[80%] z-10 overflow-hidden"
+        className="relative bg-white p-6 rounded-xl shadow-lg w-[30%] h-[75%] z-10 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-3">Quản lý kích cỡ</h2>
@@ -129,7 +129,6 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
             </button>
           </form>
 
-          {/* Đây là phần cần scroll */}
           <div className="flex-1 overflow-y-auto">
             <TableOneColumn
               data={sizes}
@@ -139,7 +138,6 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
             />
           </div>
 
-          {/* Pagination luôn nằm bên dưới card */}
           <div className="mb-10">
             <Pagination
               currentPage={pagination.page}
