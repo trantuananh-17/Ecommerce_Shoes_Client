@@ -1,18 +1,23 @@
-import React from "react";
-
 interface TableRow {
   id: string;
-  [key: string]: string | number | boolean | undefined;
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | undefined
+    | { vi: string; en: string };
 }
 
-interface Column {
+interface Column<T> {
   label: string;
-  accessor: string;
+  accessor: (
+    row: T
+  ) => string | number | boolean | undefined | { vi: string; en: string };
 }
 
-interface TableProps {
-  columns: Column[];
-  data: TableRow[];
+interface TableProps<T> {
+  columns: Column<T>[];
+  data: T[];
   showEdit?: boolean;
   showDelete?: boolean;
   showToggle?: boolean;
@@ -22,17 +27,17 @@ interface TableProps {
   onToggle?: (id: string, enabled: boolean) => void;
 }
 
-const TableManyColumn: React.FC<TableProps> = ({
+const TableManyColumn = <T extends TableRow>({
   columns,
   data,
   showEdit,
   showDelete,
   showToggle,
-  toggleField = "active",
+  toggleField = "isActive",
   onEdit,
   onDelete,
   onToggle,
-}) => {
+}: TableProps<T>) => {
   const handleToggle = (id: string, currentActive: boolean) => {
     if (onToggle) {
       onToggle(id, currentActive);
@@ -40,13 +45,10 @@ const TableManyColumn: React.FC<TableProps> = ({
   };
 
   return (
-    <div className="relative my-6  overflow-x-auto shadow-md sm:rounded-lg">
+    <div className="relative my-6 overflow-x-auto shadow-md sm:rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            {/* <th className="p-4">
-              <input type="checkbox" className="w-4 h-4" />
-            </th> */}
             {columns.map((col, index) => (
               <th key={index} className="px-2 py-3">
                 {col.label}
@@ -66,16 +68,13 @@ const TableManyColumn: React.FC<TableProps> = ({
                 key={row.id}
                 className="bg-white border-b border-b-gray-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
-                {/* <td className="w-4 p-4">
-                  <input type="checkbox" className="w-4 h-4" />
-                </td> */}
                 {columns.map((col, colIdx) => (
                   <td
                     key={colIdx}
                     className={`px-2 py-3 text-gray-900 dark:text-white max-w-[100px] truncate`}
-                    title={String(row[col.accessor] ?? "")}
+                    title={String(col.accessor(row) ?? "")}
                   >
-                    {String(row[col.accessor] ?? "")}
+                    {String(col.accessor(row) ?? "")}
                   </td>
                 ))}
                 {showToggle && (
