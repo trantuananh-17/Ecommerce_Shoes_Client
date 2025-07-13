@@ -1,17 +1,14 @@
 import { type RouteObject } from "react-router-dom";
 import AdminLayout from "../components/admin/layout/AdminLayout";
 import Login from "../pages/admin/auth/Login";
-import Dashboard from "../pages/admin/Dashboard";
-import ChangePassword from "../pages/admin/ChangePassword";
-import Product from "../pages/admin/Product";
-import Brand from "../pages/admin/Brand";
-import Discount from "../pages/admin/Discount";
-import DiscountEvent from "../pages/admin/DiscountEvent";
-import WordBanned from "../pages/admin/WordBanned";
-import Order from "../pages/admin/Order";
-import User from "../pages/admin/User";
+import Dashboard from "../pages/admin/dashboard/Dashboard";
+import ChangePassword from "../pages/admin/changePassword/ChangePassword";
+import Discount from "../pages/admin/discount/Discount";
+import DiscountEvent from "../pages/admin/event/DiscountEvent";
+import WordBanned from "../pages/admin/wordbanned/WordBanned";
+import Order from "../pages/admin/order/Order";
 import ProtectedRoute from "../components/shared/ProtectedRoute";
-import ListProduct from "../pages/user/ListProduct/ListProduct";
+import ListProduct from "../pages/user/Products/Products";
 import NotFoundPage from "../pages/user/Error/NotFoundPage";
 import UserLayout from "../Layout/UserLayout";
 import StatusLayout from "../Layout/StatusLayout";
@@ -21,6 +18,9 @@ import RegisterPage from "../pages/user/auth/RegisterPage";
 import LandingPage from "../pages/user/Landing/LandingPage";
 import Cart from "../pages/user/Cart/Cart";
 import ProductDetail from "../pages/user/ProductDetail/ProductDetail";
+import Product from "../pages/admin/product/Product";
+import Brand from "../pages/admin/brand/Brand";
+import User from "../pages/admin/user/User";
 
 const AppRoutes: RouteObject[] = [
   { path: "/auth/login", element: <Login /> },

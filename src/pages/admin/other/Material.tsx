@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import type { ValidatedInputRef } from "../../../components/admin/ui/ValidatedInput";
+import type { ValidatedInputRef } from "../../../components/admin/ui/input/ValidatedInput";
 import { usePagination } from "../../../hooks/usePagination";
 import Pagination from "../../../components/admin/ui/Pagination";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
-import TableManyColumn from "../../../components/admin/ui/TableManyColumn";
+import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
 import {
   fetchMaterialsByAdminAPI,
   addMaterialAPI,
   updateMaterialAPI,
 } from "../../../services/material.service";
-import ValidatedInput from "../../../components/admin/ui/ValidatedInput";
+import ValidatedInput from "../../../components/admin/ui/input/ValidatedInput";
 
-import ValidatedAria from "../../../components/admin/ui/ValidatedAria";
+import ValidatedAria from "../../../components/admin/ui/input/ValidatedAria";
 import {
   descriptionEnSchema,
   descriptionViSchema,

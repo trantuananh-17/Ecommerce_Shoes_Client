@@ -1,17 +1,17 @@
-import Pagination from "../../components/admin/ui/Pagination";
+import Pagination from "../../../components/admin/ui/Pagination";
 import { CirclePlus } from "lucide-react";
-import ButtonForm from "../../components/admin/ui/ButtonForm";
-import SearchInput from "../../components/admin/ui/SearchInput";
-import TableManyColumn from "../../components/admin/ui/TableManyColumn";
-import { usePagination } from "../../hooks/usePagination";
+import ButtonForm from "../../../components/admin/ui/button/ButtonForm";
+import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
+import { usePagination } from "../../../hooks/usePagination";
 import { useCallback, useEffect, useState } from "react";
 import {
   deleteBrandAPI,
   fetchBrandAPI,
   updateActiveBrandAPI,
-} from "../../services/brand.service";
-import ToastSuccess from "../../components/shared/ToastSuccess";
-import ToastError from "../../components/shared/ToastError";
+} from "../../../services/brand.service";
+import ToastSuccess from "../../../components/shared/ToastSuccess";
+import ToastError from "../../../components/shared/ToastError";
+import SearchInput from "../../../components/admin/ui/input/SearchInput";
 
 const column = [
   {

@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import type { ValidatedInputRef } from "../../../components/admin/ui/ValidatedInput";
+import type { ValidatedInputRef } from "../../../components/admin/ui/input/ValidatedInput";
 import { usePagination } from "../../../hooks/usePagination";
 import Pagination from "../../../components/admin/ui/Pagination";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
-import TableManyColumn from "../../../components/admin/ui/TableManyColumn";
+import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
 import {
   fetchColorsByAdminAPI,
   addColorAPI,
 } from "../../../services/color.service";
-import ValidatedInput from "../../../components/admin/ui/ValidatedInput";
+import ValidatedInput from "../../../components/admin/ui/input/ValidatedInput";
 import { colorEnSchema, colorViSchema } from "../../../validator/colorSchema";
 
 const columns = [
