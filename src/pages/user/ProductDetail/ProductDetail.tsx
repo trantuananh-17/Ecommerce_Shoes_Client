@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { replace, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import type { IProductDetail } from "../../../types/product.type";
 import { fetchDetailProducttAPI } from "../../../services/product.service";
@@ -10,27 +10,36 @@ import ProductTabs from "../../../components/user/ProductDetail/ProductTabs";
 const ProductDetail = () => {
   const { slug } = useParams();
   const [product, setProduct] = useState<IProductDetail | null>(null);
+  const [loading, setLoading] = useState(true); // Thêm state để quản lý trạng thái loading
   const navigate = useNavigate();
 
   const fetchNewProduct = useCallback(async () => {
     if (!slug) return;
+
     try {
+      setLoading(true);
       const response = await fetchDetailProducttAPI(slug);
-      console.log(response);
 
       if (response?.data) {
         setProduct(response.data);
+      } else {
+        throw new Error("Product not found");
       }
     } catch (error) {
-      navigate("/error/not-found");
-
       console.error("Lỗi khi fetch chi tiết sản phẩm:", error);
+      navigate("/error/not-found", { replace: true });
+    } finally {
+      setLoading(false);
     }
   }, [slug, navigate]);
 
   useEffect(() => {
     fetchNewProduct();
   }, [fetchNewProduct]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="bg-white">
