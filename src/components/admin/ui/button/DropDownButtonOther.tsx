@@ -57,7 +57,7 @@ const DropDownButtonOther: React.FC<Props> = ({
       <button
         ref={buttonRef}
         onClick={handleToggleDropdown}
-        className="focus:outline-none flex gap-1 items-center text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 dark:bg-blue-500 dark:hover:bg-blue-700 dark:focus:ring-blue-900 h-full"
+        className="focus:outline-none flex gap-1 items-center text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3  h-full"
         type="button"
       >
         <span>Thuộc tính</span> <ChevronDown size={20} />
@@ -66,16 +66,16 @@ const DropDownButtonOther: React.FC<Props> = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute z-10 mt-2 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700"
+          className="absolute z-10 mt-2 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow "
         >
-          <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <ul className="py-2 text-sm text-gray-700 ">
             <li>
               <button
                 onClick={() => {
                   toggleSize();
                   handleCloseDropdown();
                 }}
-                className="flex items-center w-full px-4 py-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="flex items-center w-full px-4 py-4 hover:bg-gray-100 "
               >
                 <Ruler className="w-4 h-4 mr-2" />
                 Kích cỡ
@@ -87,7 +87,7 @@ const DropDownButtonOther: React.FC<Props> = ({
                   toggleColor();
                   handleCloseDropdown();
                 }}
-                className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="flex items-center w-full px-4 py-2 hover:bg-gray-100 "
               >
                 <Palette className="w-4 h-4 mr-2" />
                 Màu sắc
@@ -99,7 +99,7 @@ const DropDownButtonOther: React.FC<Props> = ({
                   toggleCategory();
                   handleCloseDropdown();
                 }}
-                className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="flex items-center w-full px-4 py-2 hover:bg-gray-100 "
               >
                 <LayoutGrid className="w-4 h-4 mr-2" />
                 Danh mục
@@ -111,7 +111,7 @@ const DropDownButtonOther: React.FC<Props> = ({
                   toggleClosure();
                   handleCloseDropdown();
                 }}
-                className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="flex items-center w-full px-4 py-2 hover:bg-gray-100 "
               >
                 <Layers2 className="w-4 h-4 mr-2" />
                 Loại dây
@@ -123,7 +123,7 @@ const DropDownButtonOther: React.FC<Props> = ({
                   toggleMaterial();
                   handleCloseDropdown();
                 }}
-                className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="flex items-center w-full px-4 py-2 hover:bg-gray-100 "
               >
                 <Package className="w-4 h-4 mr-2" />
                 Chất liệu

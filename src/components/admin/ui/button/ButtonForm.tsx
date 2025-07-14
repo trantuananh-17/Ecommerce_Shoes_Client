@@ -10,7 +10,7 @@ const ButtonForm: React.FC<Props> = ({ name, onClick, icon: Icon }) => {
   return (
     <>
       <button
-        className="focus:outline-none flex gap-1 items-center text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 dark:bg-blue-500 dark:hover:bg-blue-700 dark:focus:ring-blue-900 "
+        className="focus:outline-none flex gap-1 items-center text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 "
         type="submit"
         onClick={onClick}
       >
