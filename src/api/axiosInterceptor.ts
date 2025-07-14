@@ -12,7 +12,7 @@ import { apiRequest } from "./apiRequest";
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
 }
-const lang = localStorage.getItem("lang") || "en";
+const lang = localStorage.getItem("language") || "en";
 
 export const auth = axios.create({
   baseURL,
@@ -34,7 +34,7 @@ export default function AxiosInterceptor(onUnauthenticated: () => void) {
       (config.headers as AxiosHeaders).set("Authorization", `Bearer ${token}`);
     }
 
-    const lang = localStorage.getItem("lang") || "en";
+    const lang = localStorage.getItem("language") || "en";
     config.headers["Accept-Language"] = lang;
 
     return config;
