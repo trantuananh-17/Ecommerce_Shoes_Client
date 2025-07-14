@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useForm, Controller } from "react-hook-form"; // Import React Hook Form
 import TableOneColumn from "../../../components/admin/ui/table/TableOneColumn";
-import { sizeSchema } from "../../../validator/sizeSchema";
-import ValidatedInput, {
-  type ValidatedInputRef,
-} from "../../../components/admin/ui/input/ValidatedInput";
+import ValidatedInput from "../../../components/admin/ui/input/ValidatedInput";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
 import Pagination from "../../../components/admin/ui/Pagination";
@@ -13,6 +11,7 @@ import {
   fetchSizesAPI,
 } from "../../../services/size.service";
 import { usePagination } from "../../../hooks/usePagination";
+import { sizeSchema } from "../../../validator/sizeSchema";
 
 type SizeItem = {
   id: string;
@@ -24,14 +23,22 @@ type Props = {
 };
 
 const Size: React.FC<Props> = React.memo(({ onClose }) => {
-  const inputRef = useRef<ValidatedInputRef>(null);
   const [sizes, setSizes] = useState<SizeItem[]>([]);
-  const [newSize, setNewSize] = useState<string>("");
-  const [inputKey, setInputKey] = useState(0);
   const [toastSuccess, setToastSuccess] = useState(false);
   const [toastError, setToastError] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const { pagination, setPage, updatePagination } = usePagination(1, 8);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      size: "",
+    },
+  });
 
   const fetchSizes = useCallback(async () => {
     const response = await fetchSizesAPI(pagination.page);
@@ -50,18 +57,18 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
     fetchSizes();
   }, [fetchSizes]);
 
-  const handleAddSize = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const validateSize = (value: string) => {
+    const { error } = sizeSchema.validate(value);
 
-    const isValid = inputRef.current?.validate();
-    if (!isValid) return;
+    return error ? error.details[0].message : true;
+  };
 
+  const handleAddSize = async (data: { size: string }) => {
     try {
-      const response = await addSizeAPI(newSize);
+      const response = await addSizeAPI(data.size);
 
       if (response?.data) {
-        setNewSize("");
-        setInputKey((k) => k + 1);
+        reset();
         setToastMessage(response.message);
         setToastSuccess(true);
         setTimeout(() => setToastSuccess(false), 3000);
@@ -104,7 +111,6 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
       onClick={onClose}
     >
       <div className="absolute inset-0 bg-black opacity-50" />
-
       <div
         className="relative bg-white p-6 rounded-xl shadow-lg w-[30%] h-[75%] z-10 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -112,14 +118,23 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
         <h2 className="text-xl font-bold mb-3">Quản lý kích cỡ</h2>
 
         <div className="flex flex-col h-full">
-          <form className="mb-2 flex items-end gap-4" onSubmit={handleAddSize}>
-            <ValidatedInput
-              key={`size-${inputKey}`}
-              ref={inputRef}
-              placeholder="Kích cỡ"
-              schema={sizeSchema}
-              value={newSize}
-              onChange={setNewSize}
+          <form
+            className="mb-2 flex items-end gap-4"
+            onSubmit={handleSubmit(handleAddSize)}
+          >
+            <Controller
+              name="size"
+              control={control}
+              rules={{
+                validate: validateSize,
+              }}
+              render={({ field }) => (
+                <ValidatedInput
+                  {...field}
+                  placeholder="Kích cỡ"
+                  error={errors.size?.message}
+                />
+              )}
             />
             <button
               type="submit"

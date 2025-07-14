@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import type { ValidatedInputRef } from "../../../components/admin/ui/input/ValidatedInput";
-import { usePagination } from "../../../hooks/usePagination";
-import Pagination from "../../../components/admin/ui/Pagination";
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
 import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
+import Pagination from "../../../components/admin/ui/Pagination";
 import {
   fetchClosureByAdminAPI,
   addClosureAPI,
@@ -18,10 +17,7 @@ import {
   descriptionViSchema,
 } from "../../../validator/closureSchema";
 import ValidatedAria from "../../../components/admin/ui/input/ValidatedAria";
-
-type Props = {
-  onClose: () => void;
-};
+import { usePagination } from "../../../hooks/usePagination";
 
 const columns = [
   {
@@ -34,6 +30,10 @@ const columns = [
   },
 ];
 
+type Props = {
+  onClose: () => void;
+};
+
 type ClosureItem = {
   id: string;
   name: { vi: string; en: string };
@@ -44,18 +44,26 @@ type ClosureItem = {
 };
 
 const Closure: React.FC<Props> = React.memo(({ onClose }) => {
-  const inputRef = useRef<ValidatedInputRef>(null);
-  const [inputKey, setInputKey] = useState(0);
+  const { pagination, setPage, updatePagination } = usePagination(1, 5);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      closureVi: "",
+      closureEn: "",
+      descriptionVi: "",
+      descriptionEn: "",
+    },
+  });
+
   const [closures, setClosures] = useState<ClosureItem[]>([]);
-  const [newClosureVi, setNewClosureVi] = useState<string>("");
-  const [newClosureEn, setNewClosureEn] = useState<string>("");
-  const [newDescriptionVi, setNewDescriptionVi] = useState<string>("");
-  const [newDescriptionEn, setNewDescriptionEn] = useState<string>("");
-  const [editingClosureId, setEditingClosureId] = useState<string | null>(null);
   const [toastSuccess, setToastSuccess] = useState(false);
   const [toastError, setToastError] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const { pagination, setPage, updatePagination } = usePagination(1, 5);
+  const [editingClosureId, setEditingClosureId] = useState<string | null>(null);
 
   const fetchClosures = useCallback(async () => {
     const response = await fetchClosureByAdminAPI(
@@ -78,45 +86,33 @@ const Closure: React.FC<Props> = React.memo(({ onClose }) => {
     fetchClosures();
   }, [fetchClosures]);
 
-  const handleAddClosure = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const isValid = inputRef.current?.validate();
-    if (!isValid) return;
-
-    if (
-      !newClosureVi ||
-      !newClosureEn ||
-      !newDescriptionVi ||
-      !newDescriptionEn
-    ) {
-      setToastMessage("Vui lòng nhập đầy đủ tất cả các trường.");
-      setToastError(true);
-      setTimeout(() => setToastError(false), 3000);
-      return;
-    }
-
+  const handleAddClosure = async (data: {
+    closureVi: string;
+    closureEn: string;
+    descriptionVi: string;
+    descriptionEn: string;
+  }) => {
     try {
       let response;
-
       if (editingClosureId) {
         response = await updateClosureAPI(editingClosureId, {
-          name: { vi: newClosureVi, en: newClosureEn },
-          description: { vi: newDescriptionVi, en: newDescriptionEn },
+          name: { vi: data.closureVi, en: data.closureEn },
+          description: { vi: data.descriptionVi, en: data.descriptionEn },
         });
       } else {
         response = await addClosureAPI({
-          name: { vi: newClosureVi, en: newClosureEn },
-          description: { vi: newDescriptionVi, en: newDescriptionEn },
+          name: { vi: data.closureVi, en: data.closureEn },
+          description: { vi: data.descriptionVi, en: data.descriptionEn },
         });
       }
 
       if (response?.data || response.message) {
-        setNewClosureVi("");
-        setNewClosureEn("");
-        setNewDescriptionVi("");
-        setNewDescriptionEn("");
-        setInputKey((prevKey) => prevKey + 1);
+        reset({
+          closureVi: "",
+          closureEn: "",
+          descriptionVi: "",
+          descriptionEn: "",
+        });
         setToastMessage(response.message);
         setToastSuccess(true);
         setTimeout(() => setToastSuccess(false), 3000);
@@ -142,23 +138,25 @@ const Closure: React.FC<Props> = React.memo(({ onClose }) => {
 
   const handleEdit = (id: string) => {
     const closure = closures.find((cl) => cl.id === id);
-
     if (closure) {
       setEditingClosureId(closure.id);
-      setNewClosureVi(closure.name.vi);
-      setNewClosureEn(closure.name.en);
-      setNewDescriptionVi(closure.description.vi);
-      setNewDescriptionEn(closure.description.en);
+      reset({
+        closureVi: closure.name.vi,
+        closureEn: closure.name.en,
+        descriptionVi: closure.description.vi,
+        descriptionEn: closure.description.en,
+      });
     }
   };
 
   const handleCancelEdit = () => {
     setEditingClosureId(null);
-    setNewClosureVi("");
-    setNewClosureEn("");
-    setNewDescriptionVi("");
-    setNewDescriptionEn("");
-    setInputKey((prevKey) => prevKey + 1);
+    reset({
+      closureVi: "",
+      closureEn: "",
+      descriptionVi: "",
+      descriptionEn: "",
+    });
   };
 
   return (
@@ -168,56 +166,88 @@ const Closure: React.FC<Props> = React.memo(({ onClose }) => {
     >
       <div className="absolute inset-0 bg-black opacity-50" />
       <div
-        className="relative bg-white p-6 rounded-xl shadow-lg w-[30%] h-[75%] z-10 flex flex-col"
+        className="relative bg-white p-6 rounded-xl shadow-lg w-[45%] h-[90%] z-10 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-3">Quản lý kiểu buộc dây</h2>
 
         <form
-          className=" flex items-end justify-between "
-          onSubmit={handleAddClosure}
+          className="flex items-end justify-between mb-4 gap-2"
+          onSubmit={handleSubmit(handleAddClosure)}
         >
-          <div className="flex flex-col gap-5">
-            <div className="flex gap-5">
-              <ValidatedInput
-                key={`closure-vi-${inputKey}`}
-                ref={inputRef}
-                placeholder="Tên kiểu buộc dây (Tiếng Việt)"
-                schema={closureViSchema}
-                value={newClosureVi}
-                onChange={setNewClosureVi}
-              />
+          <div className="w-[80%]">
+            <div className="flex flex-col gap-5 w-full">
+              <div className="flex gap-5 w-full">
+                <Controller
+                  name="closureVi"
+                  control={control}
+                  rules={{
+                    validate: (value) =>
+                      closureViSchema.validate(value).error?.message || true,
+                  }}
+                  render={({ field }) => (
+                    <ValidatedInput
+                      {...field}
+                      placeholder="Tên kiểu buộc dây (Tiếng Việt)"
+                      error={errors.closureVi?.message}
+                    />
+                  )}
+                />
 
-              <ValidatedInput
-                key={`closure-en-${inputKey}`}
-                ref={inputRef}
-                placeholder="Tên kiểu buộc dây (Tiếng Anh)"
-                schema={closureEnSchema}
-                value={newClosureEn}
-                onChange={setNewClosureEn}
-              />
-            </div>
+                <Controller
+                  name="closureEn"
+                  control={control}
+                  rules={{
+                    validate: (value) =>
+                      closureEnSchema.validate(value).error?.message || true,
+                  }}
+                  render={({ field }) => (
+                    <ValidatedInput
+                      {...field}
+                      placeholder="Tên kiểu buộc dây (Tiếng Anh)"
+                      error={errors.closureEn?.message}
+                    />
+                  )}
+                />
+              </div>
 
-            <div className="flex gap-5">
-              <ValidatedAria
-                key={`description-vi-${inputKey}`}
-                ref={inputRef}
-                placeholder="Mô tả (Tiếng Việt)"
-                schema={descriptionViSchema}
-                value={newDescriptionVi}
-                onChange={setNewDescriptionVi}
-                row={3}
-              />
+              <div className="flex gap-5">
+                <Controller
+                  name="descriptionVi"
+                  control={control}
+                  rules={{
+                    validate: (value) =>
+                      descriptionViSchema.validate(value).error?.message ||
+                      true,
+                  }}
+                  render={({ field }) => (
+                    <ValidatedAria
+                      {...field}
+                      placeholder="Mô tả (Tiếng Việt)"
+                      error={errors.descriptionVi?.message}
+                      row={3}
+                    />
+                  )}
+                />
 
-              <ValidatedAria
-                key={`description-en-${inputKey}`}
-                ref={inputRef}
-                placeholder="Mô tả (Tiếng Anh)"
-                schema={descriptionEnSchema}
-                value={newDescriptionEn}
-                onChange={setNewDescriptionEn}
-                row={3}
-              />
+                <Controller
+                  name="descriptionEn"
+                  control={control}
+                  rules={{
+                    validate: (value) =>
+                      descriptionEnSchema.validate(value).error?.message ||
+                      true,
+                  }}
+                  render={({ field }) => (
+                    <ValidatedAria
+                      {...field}
+                      placeholder="Mô tả (Tiếng Anh)"
+                      error={errors.descriptionEn?.message}
+                      row={3}
+                    />
+                  )}
+                />
+              </div>
             </div>
           </div>
 

@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import type { ValidatedInputRef } from "../../../components/admin/ui/input/ValidatedInput";
-import { usePagination } from "../../../hooks/usePagination";
-import Pagination from "../../../components/admin/ui/Pagination";
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
 import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
+import Pagination from "../../../components/admin/ui/Pagination";
 import {
   fetchCategoryAPI,
   addCategoryAPI,
@@ -15,21 +14,7 @@ import {
   categoryEnSchema,
   categoryViSchema,
 } from "../../../validator/categorySchema";
-
-type Props = {
-  onClose: () => void;
-};
-
-const columns = [
-  {
-    label: "Tên danh mục ",
-    accessor: (row: CategoryItem) => row.name.vi,
-  },
-  {
-    label: "Category Name",
-    accessor: (row: CategoryItem) => row.name.en,
-  },
-];
+import { usePagination } from "../../../hooks/usePagination";
 
 type CategoryItem = {
   id: string;
@@ -40,24 +25,46 @@ type CategoryItem = {
   updatedAt: string;
 };
 
+type Props = {
+  onClose: () => void;
+};
+
+const columns = [
+  {
+    label: "Tên danh mục",
+    accessor: (row: CategoryItem) => row.name.vi,
+  },
+  {
+    label: "Category Name",
+    accessor: (row: CategoryItem) => row.name.en,
+  },
+];
+
 const Category: React.FC<Props> = React.memo(({ onClose }) => {
-  const inputRef = useRef<ValidatedInputRef>(null);
-  const [inputKey, setInputKey] = useState(0);
+  const { pagination, setPage, updatePagination } = usePagination(1, 7);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      categoryVi: "",
+      categoryEn: "",
+      isActive: true,
+    },
+  });
+
   const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [newCategoryVi, setNewCategoryVi] = useState<string>("");
-  const [newCategoryEn, setNewCategoryEn] = useState<string>("");
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
-    null
-  );
   const [toastSuccess, setToastSuccess] = useState(false);
   const [toastError, setToastError] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const { pagination, setPage, updatePagination } = usePagination(1, 7);
-  const [isActive, setIsActive] = useState<boolean>(true);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
+    null
+  );
 
   const fetchCategories = useCallback(async () => {
     const response = await fetchCategoryAPI(pagination.page, pagination.limit);
-
     if (response?.data) {
       setCategories(response.data.data);
       updatePagination({
@@ -73,45 +80,33 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
     fetchCategories();
   }, [fetchCategories]);
 
-  const handleAddCategory = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const isValid = inputRef.current?.validate();
-    if (!isValid) return;
-
-    if (!newCategoryVi || !newCategoryEn) {
-      setToastMessage("Vui lòng nhập đầy đủ tất cả các trường.");
-      setToastError(true);
-      setTimeout(() => setToastError(false), 3000);
-      return;
-    }
-
+  const handleAddCategory = async (data: {
+    categoryVi: string;
+    categoryEn: string;
+    isActive: boolean;
+  }) => {
     try {
       let response;
-
       if (editingCategoryId) {
         response = await updateCategoryAPI(editingCategoryId, {
-          name: { vi: newCategoryVi, en: newCategoryEn },
-          isActive: isActive,
+          name: { vi: data.categoryVi, en: data.categoryEn },
+          isActive: data.isActive,
         });
       } else {
         response = await addCategoryAPI({
-          name: { vi: newCategoryVi, en: newCategoryEn },
+          name: { vi: data.categoryVi, en: data.categoryEn },
         });
       }
 
-      if (response?.data || response.message) {
-        setNewCategoryVi("");
-        setNewCategoryEn("");
-        setInputKey((prevKey) => prevKey + 1);
+      if (response?.data || response || response.message) {
         setToastMessage(response.message);
         setToastSuccess(true);
         setTimeout(() => setToastSuccess(false), 3000);
         await fetchCategories();
+        reset({ categoryVi: "", categoryEn: "", isActive: true });
         setEditingCategoryId(null);
-        setIsActive(true);
       } else {
-        setToastMessage("Thêm danh mục thất bại.");
+        setToastMessage("Thêm hoặc sửa danh mục thất bại.");
         setToastError(true);
         setTimeout(() => setToastError(false), 3000);
       }
@@ -130,21 +125,19 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
 
   const handleEdit = (id: string) => {
     const category = categories.find((cat) => cat.id === id);
-
     if (category) {
       setEditingCategoryId(category.id);
-      setNewCategoryVi(category.name.vi);
-      setNewCategoryEn(category.name.en);
-      setIsActive(category.isActive);
+      reset({
+        categoryVi: category.name.vi,
+        categoryEn: category.name.en,
+        isActive: category.isActive,
+      });
     }
   };
 
   const handleCancelEdit = () => {
     setEditingCategoryId(null);
-    setNewCategoryVi("");
-    setNewCategoryEn("");
-    setIsActive(true);
-    setInputKey((prevKey) => prevKey + 1);
+    reset({ categoryVi: "", categoryEn: "", isActive: true });
   };
 
   return (
@@ -152,36 +145,53 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
       className="absolute inset-0 z-50 flex items-center justify-center"
       onClick={onClose}
     >
-      <div className="absolute inset-0 bg-black opacity-50" />
+      <div className="absolute inset-0 bg-black opacity-50 w-full" />
       <div
-        className="relative bg-white p-6 rounded-xl shadow-lg w-[35%] h-[75%] z-10 flex flex-col"
+        className="relative bg-white p-6 rounded-xl shadow-lg w-[45%] h-[75%] z-10 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-3">Quản lý danh mục</h2>
 
         <form
-          className="mb-2 flex items-end gap-4"
-          onSubmit={handleAddCategory}
+          className="mb-2 flex gap-4 flex-col"
+          onSubmit={handleSubmit(handleAddCategory)}
         >
-          <ValidatedInput
-            key={`category-vi-${inputKey}`}
-            ref={inputRef}
-            placeholder="Tên danh mục (Tiếng Việt)"
-            schema={categoryViSchema}
-            value={newCategoryVi}
-            onChange={setNewCategoryVi}
-          />
+          <div className="flex flex-col gap-5 w-full">
+            <div className="flex gap-5 w-full">
+              <Controller
+                name="categoryVi"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    categoryViSchema.validate(value).error?.message || true,
+                }}
+                render={({ field }) => (
+                  <ValidatedInput
+                    {...field}
+                    placeholder="Tên danh mục (Tiếng Việt)"
+                    error={errors.categoryVi?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="categoryEn"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    categoryEnSchema.validate(value).error?.message || true,
+                }}
+                render={({ field }) => (
+                  <ValidatedInput
+                    {...field}
+                    placeholder="Tên danh mục (Tiếng Anh)"
+                    error={errors.categoryEn?.message}
+                  />
+                )}
+              />
+            </div>
+          </div>
 
-          <ValidatedInput
-            key={`category-en-${inputKey}`}
-            ref={inputRef}
-            placeholder="Tên danh mục (Tiếng Anh)"
-            schema={categoryEnSchema}
-            value={newCategoryEn}
-            onChange={setNewCategoryEn}
-          />
-
-          <div className="flex gap-2">
+          <div className="flex gap-2 ">
             <button
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded ml-2"
@@ -206,8 +216,6 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
             columns={columns}
             data={categories}
             showEdit
-            showToggle
-            toggleField="isActive"
             onEdit={handleEdit}
           />
         </div>
