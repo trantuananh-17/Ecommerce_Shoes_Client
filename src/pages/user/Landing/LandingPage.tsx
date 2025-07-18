@@ -57,8 +57,6 @@ const LandingPage = () => {
     fetchNewProduct();
   }, [fetchBestSeller, fetchNewProduct]);
 
-  console.log(listBestSeller);
-
   return (
     <div className="wrap">
       <Banner />

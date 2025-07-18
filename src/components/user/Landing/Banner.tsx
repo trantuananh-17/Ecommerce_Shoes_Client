@@ -1,7 +1,9 @@
 import { NavLink } from "react-router-dom";
 import banner from "../../../assets/images/banner.jpg";
+import { useTranslation } from "react-i18next";
 
 const Banner = () => {
+  const { t } = useTranslation();
   return (
     <section className="relative pt-[41.667%] w-full overflow-hidden">
       <img
@@ -14,8 +16,9 @@ const Banner = () => {
         <h2 className="text-xl lg:text-4xl font-bold text-gray-500 lg:leading-10 animate-slideInLeft">
           {/* Vững Chắc Mỗi Bước Chân <br />
           Sự Lựa Chọn Hoàn Hảo Cho Bạn */}
-          Confidence in Every Step <br />
-          The Perfect Choice for You
+          {t("slogan1")}
+          <br />
+          {t("slogan2")}
         </h2>
         {/* Confidence in Every Step – The Perfect Choice for You */}
         <NavLink
