@@ -1,16 +1,16 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import type { ValidatedInputRef } from "../../../components/admin/ui/input/ValidatedInput";
-import { usePagination } from "../../../hooks/usePagination";
-import Pagination from "../../../components/admin/ui/Pagination";
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form"; // Import React Hook Form
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
 import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
+import Pagination from "../../../components/admin/ui/Pagination";
 import {
   fetchColorsByAdminAPI,
   addColorAPI,
 } from "../../../services/color.service";
 import ValidatedInput from "../../../components/admin/ui/input/ValidatedInput";
 import { colorEnSchema, colorViSchema } from "../../../validator/colorSchema";
+import { usePagination } from "../../../hooks/usePagination";
 
 const columns = [
   {
@@ -39,15 +39,23 @@ type ColorItem = {
 };
 
 const Color: React.FC<Props> = React.memo(({ onClose }) => {
-  const inputRef = useRef<ValidatedInputRef>(null);
-  const [inputKey, setInputKey] = useState(0);
   const [colors, setColors] = useState<ColorItem[]>([]);
-  const [newColorVi, setNewColorVi] = useState<string>("");
-  const [newColorEn, setNewColorEn] = useState<string>("");
   const [toastSuccess, setToastSuccess] = useState(false);
   const [toastError, setToastError] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const { pagination, setPage, updatePagination } = usePagination(1, 8);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      colorVi: "",
+      colorEn: "",
+    },
+  });
 
   const fetchColors = useCallback(async () => {
     const response = await fetchColorsByAdminAPI(
@@ -70,32 +78,18 @@ const Color: React.FC<Props> = React.memo(({ onClose }) => {
     fetchColors();
   }, [fetchColors]);
 
-  const handleAddColor = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!newColorVi || !newColorEn) {
-      setToastMessage(
-        "Vui lòng nhập cả tên màu sắc bằng tiếng Việt và tiếng Anh."
-      );
-      setToastError(true);
-      setTimeout(() => setToastError(false), 3000);
-      return;
-    }
-
+  const handleAddColor = async (data: { colorVi: string; colorEn: string }) => {
     try {
       const response = await addColorAPI({
-        name: { vi: newColorVi, en: newColorEn },
+        name: { vi: data.colorVi, en: data.colorEn },
       });
 
       if (response?.data) {
-        setNewColorVi("");
-        setNewColorEn("");
+        reset();
         setToastMessage(response.message);
         setToastSuccess(true);
         setTimeout(() => setToastSuccess(false), 3000);
         await fetchColors();
-
-        setInputKey((prevKey) => prevKey + 1);
       } else {
         setToastMessage("Thêm màu sắc thất bại.");
         setToastError(true);
@@ -126,48 +120,61 @@ const Color: React.FC<Props> = React.memo(({ onClose }) => {
       >
         <h2 className="text-xl font-bold mb-3">Quản lý màu sắc</h2>
 
-        <form className="mb-2 flex items-end gap-4" onSubmit={handleAddColor}>
-          <ValidatedInput
-            key={`color-vi-${inputKey}`}
-            placeholder="Màu sắc "
-            schema={colorViSchema}
-            value={newColorVi}
-            onChange={setNewColorVi}
-          />
+        <form
+          className="mb-2 flex items-end gap-4"
+          onSubmit={handleSubmit(handleAddColor)}
+        >
+          <div className="flex flex-col gap-5">
+            <div className="flex gap-5">
+              <Controller
+                name="colorVi"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    colorViSchema.validate(value).error?.message || true,
+                }}
+                render={({ field }) => (
+                  <ValidatedInput
+                    {...field}
+                    placeholder="Màu sắc (Tiếng Việt)"
+                    error={errors.colorVi?.message}
+                  />
+                )}
+              />
 
-          <ValidatedInput
-            key={`color-en-${inputKey}`}
-            ref={inputRef}
-            placeholder="Color Name "
-            schema={colorEnSchema}
-            value={newColorEn}
-            onChange={setNewColorEn}
-          />
+              <Controller
+                name="colorEn"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    colorEnSchema.validate(value).error?.message || true,
+                }}
+                render={({ field }) => (
+                  <ValidatedInput
+                    {...field}
+                    placeholder="Color Name (Tiếng Anh)"
+                    error={errors.colorEn?.message}
+                  />
+                )}
+              />
+            </div>
+          </div>
 
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded ml-4"
-          >
-            Thêm
-          </button>
+          <div className="flex gap-2 flex-col">
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded ml-4"
+            >
+              Thêm
+            </button>
+          </div>
         </form>
 
         <div className="flex-1 overflow-y-auto">
-          {" "}
-          <TableManyColumn
-            columns={columns}
-            data={colors}
-            showEdit
-            // showToggle
-            // toggleField="isActive"
-            // onDelete={(id) => console.log("Delete", id)}
-            // onToggle={(id, isActive) => console.log("Toggle", id, isActive)}
-          />
+          <TableManyColumn columns={columns} data={colors} />
         </div>
 
         <div className="mt-2">
-          {" "}
-          {/* Pagination luôn nằm dưới */}
           <Pagination
             currentPage={pagination.page}
             totalItems={pagination.totalDocs}

@@ -46,8 +46,8 @@ const TableManyColumn = <T extends TableRow>({
 
   return (
     <div className="relative my-6 overflow-x-auto shadow-md sm:rounded-lg">
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
           <tr>
             {columns.map((col, index) => (
               <th key={index} className="px-2 py-3">
@@ -66,12 +66,12 @@ const TableManyColumn = <T extends TableRow>({
             return (
               <tr
                 key={row.id}
-                className="bg-white border-b border-b-gray-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                className="bg-white border-b border-b-gray-300   hover:bg-gray-50 "
               >
                 {columns.map((col, colIdx) => (
                   <td
                     key={colIdx}
-                    className={`px-2 py-3 text-gray-900 dark:text-white max-w-[100px] truncate`}
+                    className={`px-2 py-3 text-gray-900 max-w-[100px] truncate`}
                     title={String(col.accessor(row) ?? "")}
                   >
                     {String(col.accessor(row) ?? "")}
@@ -87,7 +87,7 @@ const TableManyColumn = <T extends TableRow>({
                         className="sr-only peer"
                         aria-label={`Toggle enabled for ${row.id}`}
                       />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
                     </label>
                   </td>
                 )}
