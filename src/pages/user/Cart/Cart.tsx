@@ -23,6 +23,8 @@ const Cart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  console.log(items);
+
   const updateTotalPrice = (updatedItems: CartItem[]) => {
     if (updatedItems.length === 0) {
       dispatch(setTotalPrices({ totalPrice: 0 }));
