@@ -1,8 +1,9 @@
-// src/components/user/Landing/ListProduct.tsx
 import { useContext } from "react";
 import ProductItem from "../Shared/ui/ProductItem";
 import type { IProductItem } from "../../../types/product.type";
 import ProductContext from "../../../context/ProductContext";
+import { motion } from "framer-motion";
+import { fadeIn } from "../../../motion/variants";
 
 const ListProduct = () => {
   const bestSellerList = useContext(ProductContext);
@@ -13,8 +14,15 @@ const ListProduct = () => {
 
   return (
     <ul className="mt-8 lg:grid grid-cols-4 gap-7">
-      {bestSellerList.map((product: IProductItem) => (
-        <ProductItem key={product.id} {...product} />
+      {bestSellerList.map((product: IProductItem, index) => (
+        <motion.div
+          variants={fadeIn("right", +`0.${index}`)}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: false, amount: 0.1 }}
+        >
+          <ProductItem key={product.id} {...product} />
+        </motion.div>
       ))}
     </ul>
   );

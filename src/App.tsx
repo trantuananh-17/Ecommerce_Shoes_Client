@@ -18,6 +18,7 @@ import {
   setCartSummary,
   setTotalPrices,
 } from "./stores/slices/cartSlice";
+// import WebSocketComponent from "./pages/user/sockettest";
 
 function App() {
   const dispatch = useDispatch();
@@ -32,7 +33,6 @@ function App() {
       if (accessToken) {
         const cartItemsSumaryResponse = await fetchCartSumaryAPI();
         const cartItemsResponse = await fetchDataCartAPI();
-        console.log(cartItemsResponse.data.result);
 
         dispatch(
           setCartSummary({
@@ -85,7 +85,12 @@ function App() {
     refresh();
   }, [interceptorReady, dispatch, fetchCartData]);
 
-  return <>{routing}</>;
+  return (
+    // <>
+    //   <WebSocketComponent />
+    // </>
+    <>{routing}</>
+  );
 }
 
 export default App;

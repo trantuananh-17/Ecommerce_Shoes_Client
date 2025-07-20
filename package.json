@@ -15,10 +15,12 @@
     "axios": "^1.9.0",
     "dotenv": "^16.5.0",
     "i18next": "^25.3.2",
+    "framer-motion": "^12.23.6",
     "joi": "^17.13.3",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.511.0",
+    "motion": "^12.23.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.60.0",
@@ -26,6 +28,7 @@
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.0",
+    "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.1.7"
   },
   "devDependencies": {

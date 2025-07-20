@@ -52,6 +52,10 @@ body {
 }
 
 @layer components {
+  html,
+  body {
+    scroll-behavior: smooth;
+  }
   .container {
     width: var(--full);
     max-width: var(--max-width);

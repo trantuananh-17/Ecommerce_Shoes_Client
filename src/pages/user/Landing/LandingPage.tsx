@@ -60,6 +60,7 @@ const LandingPage = () => {
   return (
     <div className="wrap">
       <Banner />
+
       <Benefits />
       <DiscountCode />
       <ProductContext.Provider value={listBestSeller}>
