@@ -18,10 +18,12 @@ interface Column<T> {
 interface TableProps<T> {
   columns: Column<T>[];
   data: T[];
+  showView?: boolean;
   showEdit?: boolean;
   showDelete?: boolean;
   showToggle?: boolean;
   toggleField?: string;
+  onView?: (id: string) => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   onToggle?: (id: string, enabled: boolean) => void;
@@ -30,10 +32,12 @@ interface TableProps<T> {
 const TableManyColumn = <T extends TableRow>({
   columns,
   data,
+  showView,
   showEdit,
   showDelete,
   showToggle,
   toggleField = "isActive",
+  onView,
   onEdit,
   onDelete,
   onToggle,
@@ -45,7 +49,7 @@ const TableManyColumn = <T extends TableRow>({
   };
 
   return (
-    <div className="relative my-6 overflow-x-auto shadow-md sm:rounded-lg">
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
           <tr>
@@ -91,14 +95,22 @@ const TableManyColumn = <T extends TableRow>({
                     </label>
                   </td>
                 )}
-                {(showEdit || showDelete) && (
+                {(showView || showEdit || showDelete) && (
                   <td className="px-2 py-3 text-right space-x-4">
+                    {showView && (
+                      <button
+                        onClick={() => onView?.(row.id)}
+                        className="bg-green-500 text-white px-5 py-2.5 rounded-lg text-sm hover:bg-yellow-700"
+                      >
+                        Chi tiết
+                      </button>
+                    )}
                     {showEdit && (
                       <button
                         onClick={() => onEdit?.(row.id)}
                         className="bg-yellow-500 text-white px-5 py-2.5 rounded-lg text-sm hover:bg-yellow-700"
                       >
-                        Edit
+                        Sửa
                       </button>
                     )}
                     {showDelete && (
@@ -106,7 +118,7 @@ const TableManyColumn = <T extends TableRow>({
                         onClick={() => onDelete?.(row.id)}
                         className="bg-red-500 text-white px-5 py-2.5 rounded-lg text-sm hover:bg-red-700"
                       >
-                        Delete
+                        Xóa
                       </button>
                     )}
                   </td>

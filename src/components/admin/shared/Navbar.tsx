@@ -13,7 +13,7 @@ import {
 
 const Navbar = () => {
   return (
-    <div className="w-60 h-screen p-4 border-r border-gray-300">
+    <div className="w-60 min-h-screen p-4 border-r border-gray-200">
       <img src={logo} className="mb-4" />
       <span className="font-semibold px-3 py-2 block">Tổng quan</span>
       <NavItem to="/admin" label="Dashboard" icon={LayoutDashboard} />

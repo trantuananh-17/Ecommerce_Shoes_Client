@@ -4,12 +4,18 @@ import Navbar from "../shared/Navbar";
 
 const AdminLayout = () => {
   return (
-    <div className="flex select-none">
-      <Navbar />
-      <div className="relative flex-1 flex flex-col min-h-screen">
+    <div className="relative flex select-none h-screen">
+      <div className="fixed top-0 left-0  bg-white ">
+        <Navbar />
+      </div>
+
+      {/* Content Area */}
+      <div className=" flex-1 bg-white flex flex-col ml-64 min-h-screen">
         <AdminHeader />
-        <main className="flex-1  bg-gray-100 border-t-1 border-gray-300">
-          <Outlet />
+        <main className="flex-1 bg-gray-100 border-t-1 border-gray-100 overflow-y-auto">
+          <div className="flex-1 min-h-full bg-white">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
