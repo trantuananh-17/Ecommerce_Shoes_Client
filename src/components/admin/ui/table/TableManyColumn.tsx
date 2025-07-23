@@ -53,6 +53,7 @@ const TableManyColumn = <T extends TableRow>({
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
           <tr>
+            <th className="px-2 py-3 text-center w-10">#</th>
             {columns.map((col, index) => (
               <th key={index} className="px-2 py-3">
                 {col.label}
@@ -65,13 +66,16 @@ const TableManyColumn = <T extends TableRow>({
           </tr>
         </thead>
         <tbody>
-          {data.map((row) => {
+          {data.map((row, index) => {
             const isEnabled = !!row[toggleField];
             return (
               <tr
                 key={row.id}
-                className="bg-white border-b border-b-gray-300   hover:bg-gray-50 "
+                className="bg-white border-b border-b-gray-300 hover:bg-gray-50 "
               >
+                <td className="px-2 py-3 text-center text-gray-700">
+                  {index + 1}
+                </td>
                 {columns.map((col, colIdx) => (
                   <td
                     key={colIdx}
