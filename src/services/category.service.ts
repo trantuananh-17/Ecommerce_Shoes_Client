@@ -1,13 +1,11 @@
-import axios from "axios";
-import { baseURL } from "../api/apiClient";
 import { apiRequest } from "../api/apiRequest";
-const auth = axios.create({ baseURL });
+import { auth } from "../api/axiosInterceptor";
 
-type addCategory = {
+export type addCategory = {
   name: { vi: string; en: string };
 };
 
-type updateCategory = {
+export type updateCategory = {
   name: { vi: string; en: string };
   isActive: boolean;
 };

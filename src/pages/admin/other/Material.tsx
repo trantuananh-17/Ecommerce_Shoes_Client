@@ -1,14 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
 import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
 import Pagination from "../../../components/admin/ui/Pagination";
-import {
-  fetchMaterialsByAdminAPI,
-  addMaterialAPI,
-  updateMaterialAPI,
-} from "../../../services/material.service";
 import ValidatedInput from "../../../components/admin/ui/input/ValidatedInput";
 import ValidatedAria from "../../../components/admin/ui/input/ValidatedAria";
 import {
@@ -18,6 +13,7 @@ import {
   materialViSchema,
 } from "../../../validator/materialSchema";
 import { usePagination } from "../../../hooks/usePagination";
+import { useMaterials } from "../../../hooks/tanstack/material/useMaterials";
 
 type MaterialItem = {
   id: string;
@@ -32,6 +28,13 @@ type Props = {
   onClose: () => void;
 };
 
+type FormValues = {
+  materialVi: string;
+  materialEn: string;
+  descriptionVi: string;
+  descriptionEn: string;
+};
+
 const columns = [
   {
     label: "Tên vật liệu",
@@ -44,7 +47,6 @@ const columns = [
 ];
 
 const Material: React.FC<Props> = React.memo(({ onClose }) => {
-  const [materials, setMaterials] = useState<MaterialItem[]>([]);
   const [toastSuccess, setToastSuccess] = useState(false);
   const [toastError, setToastError] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -55,11 +57,20 @@ const Material: React.FC<Props> = React.memo(({ onClose }) => {
   const { pagination, setPage, updatePagination } = usePagination(1, 5);
 
   const {
+    materials,
+    paginationData,
+    isPending,
+    error,
+    addMaterial,
+    updateMaterial,
+  } = useMaterials(pagination.page, pagination.limit);
+
+  const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({
+  } = useForm<FormValues>({
     defaultValues: {
       materialVi: "",
       materialEn: "",
@@ -68,82 +79,51 @@ const Material: React.FC<Props> = React.memo(({ onClose }) => {
     },
   });
 
-  const fetchMaterials = useCallback(async () => {
-    const response = await fetchMaterialsByAdminAPI(
-      pagination.page,
-      pagination.limit
-    );
-    if (response?.data) {
-      setMaterials(response.data.data);
+  useEffect(() => {
+    if (paginationData) {
       updatePagination({
-        totalDocs: response.data.totalDocs,
-        totalPages: response.data.totalPages,
-        currentPage: response.data.currentPage,
-        limit: response.data.limit,
+        totalDocs: paginationData.totalDocs,
+        totalPages: paginationData.totalPages,
+        currentPage: paginationData.currentPage,
+        limit: paginationData.limit,
       });
     }
-  }, [pagination.page, pagination.limit, updatePagination]);
+  }, [paginationData, updatePagination]);
 
-  useEffect(() => {
-    fetchMaterials();
-  }, [fetchMaterials]);
+  const handleAddOrUpdateMaterial = async (formData: FormValues) => {
+    const payload = {
+      name: {
+        vi: formData.materialVi,
+        en: formData.materialEn,
+      },
+      description: {
+        vi: formData.descriptionVi,
+        en: formData.descriptionEn,
+      },
+    };
 
-  const handleAddMaterial = async (data: {
-    materialVi: string;
-    materialEn: string;
-    descriptionVi: string;
-    descriptionEn: string;
-  }) => {
     try {
-      let response;
+      const response = editingMaterialId
+        ? await updateMaterial.mutateAsync({ id: editingMaterialId, payload })
+        : await addMaterial.mutateAsync(payload);
 
-      if (editingMaterialId) {
-        response = await updateMaterialAPI(editingMaterialId, {
-          name: { vi: data.materialVi, en: data.materialEn },
-          description: { vi: data.descriptionVi, en: data.descriptionEn },
-        });
-      } else {
-        response = await addMaterialAPI({
-          name: { vi: data.materialVi, en: data.materialEn },
-          description: { vi: data.descriptionVi, en: data.descriptionEn },
-        });
-      }
-
-      if (response?.data || response.message) {
-        reset({
-          materialVi: "",
-          materialEn: "",
-          descriptionVi: "",
-          descriptionEn: "",
-        });
-        setToastMessage(response.message);
-        setToastSuccess(true);
-        setTimeout(() => setToastSuccess(false), 3000);
-        await fetchMaterials();
-        setEditingMaterialId(null);
-      } else {
-        setToastMessage("Thêm hoặc sửa vật liệu thất bại.");
-        setToastError(true);
-        setTimeout(() => setToastError(false), 3000);
-      }
+      setToastMessage(response?.message || "Thao tác thành công");
+      setToastSuccess(true);
+      setTimeout(() => setToastSuccess(false), 3000);
+      reset();
+      setEditingMaterialId(null);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setToastMessage(error.message);
-        setToastError(true);
-        setTimeout(() => setToastError(false), 3000);
-      } else {
-        setToastMessage("Đã xảy ra lỗi không xác định.");
-        setToastError(true);
-        setTimeout(() => setToastError(false), 3000);
-      }
+      const err = error as Error;
+      setToastMessage(err.message || "Thao tác thất bại");
+      setToastError(true);
+      setTimeout(() => setToastError(false), 3000);
     }
   };
 
   const handleEdit = (id: string) => {
-    const material = materials.find((m) => m.id === id);
-
+    const material = materials.find((m: MaterialItem) => m.id === id);
     if (material) {
-      setEditingMaterialId(material.id);
+      setEditingMaterialId(id);
       reset({
         materialVi: material.name.vi,
         materialEn: material.name.en,
@@ -155,12 +135,7 @@ const Material: React.FC<Props> = React.memo(({ onClose }) => {
 
   const handleCancelEdit = () => {
     setEditingMaterialId(null);
-    reset({
-      materialVi: "",
-      materialEn: "",
-      descriptionVi: "",
-      descriptionEn: "",
-    });
+    reset();
   };
 
   return (
@@ -177,94 +152,88 @@ const Material: React.FC<Props> = React.memo(({ onClose }) => {
 
         <form
           className="flex items-end justify-between mb-4"
-          onSubmit={handleSubmit(handleAddMaterial)}
+          onSubmit={handleSubmit(handleAddOrUpdateMaterial)}
         >
-          <div className="w-[80%]">
-            <div className="flex flex-col gap-5 w-full">
-              <div className="flex gap-5 w-full">
-                <Controller
-                  name="materialVi"
-                  control={control}
-                  rules={{
-                    validate: (value) =>
-                      materialViSchema.validate(value).error?.message || true,
-                  }}
-                  render={({ field }) => (
-                    <ValidatedInput
-                      {...field}
-                      placeholder="Tên vật liệu (Tiếng Việt)"
-                      error={errors.materialVi?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  name="materialEn"
-                  control={control}
-                  rules={{
-                    validate: (value) =>
-                      materialEnSchema.validate(value).error?.message || true,
-                  }}
-                  render={({ field }) => (
-                    <ValidatedInput
-                      {...field}
-                      placeholder="Tên vật liệu (Tiếng Anh)"
-                      error={errors.materialEn?.message}
-                    />
-                  )}
-                />
-              </div>
-
-              <div className="flex gap-5">
-                <Controller
-                  name="descriptionVi"
-                  control={control}
-                  rules={{
-                    validate: (value) =>
-                      descriptionViSchema.validate(value).error?.message ||
-                      true,
-                  }}
-                  render={({ field }) => (
-                    <ValidatedAria
-                      {...field}
-                      placeholder="Mô tả (Tiếng Việt)"
-                      error={errors.descriptionVi?.message}
-                      row={3}
-                    />
-                  )}
-                />
-                <Controller
-                  name="descriptionEn"
-                  control={control}
-                  rules={{
-                    validate: (value) =>
-                      descriptionEnSchema.validate(value).error?.message ||
-                      true,
-                  }}
-                  render={({ field }) => (
-                    <ValidatedAria
-                      {...field}
-                      placeholder="Mô tả (Tiếng Anh)"
-                      error={errors.descriptionEn?.message}
-                      row={3}
-                    />
-                  )}
-                />
-              </div>
+          <div className="w-[80%] flex flex-col gap-5">
+            <div className="flex gap-5">
+              <Controller
+                name="materialVi"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    materialViSchema.validate(value).error?.message || true,
+                }}
+                render={({ field }) => (
+                  <ValidatedInput
+                    {...field}
+                    placeholder="Tên vật liệu (Tiếng Việt)"
+                    error={errors.materialVi?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="materialEn"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    materialEnSchema.validate(value).error?.message || true,
+                }}
+                render={({ field }) => (
+                  <ValidatedInput
+                    {...field}
+                    placeholder="Tên vật liệu (Tiếng Anh)"
+                    error={errors.materialEn?.message}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex gap-5">
+              <Controller
+                name="descriptionVi"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    descriptionViSchema.validate(value).error?.message || true,
+                }}
+                render={({ field }) => (
+                  <ValidatedAria
+                    {...field}
+                    placeholder="Mô tả (Tiếng Việt)"
+                    error={errors.descriptionVi?.message}
+                    row={3}
+                  />
+                )}
+              />
+              <Controller
+                name="descriptionEn"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    descriptionEnSchema.validate(value).error?.message || true,
+                }}
+                render={({ field }) => (
+                  <ValidatedAria
+                    {...field}
+                    placeholder="Mô tả (Tiếng Anh)"
+                    error={errors.descriptionEn?.message}
+                    row={3}
+                  />
+                )}
+              />
             </div>
           </div>
 
-          <div className="flex gap-2 flex-col">
+          <div className="flex flex-col gap-2">
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded ml-2"
+              className="bg-blue-500 text-white px-4 py-2 rounded"
             >
               {editingMaterialId ? "Sửa" : "Thêm"}
             </button>
-
             {editingMaterialId && (
               <button
                 type="button"
-                className="bg-gray-500 text-white px-4 py-2 rounded ml-2"
+                className="bg-gray-500 text-white px-4 py-2 rounded"
                 onClick={handleCancelEdit}
               >
                 Hủy
@@ -274,12 +243,18 @@ const Material: React.FC<Props> = React.memo(({ onClose }) => {
         </form>
 
         <div className="flex-1 overflow-y-auto">
-          <TableManyColumn
-            columns={columns}
-            data={materials}
-            showEdit
-            onEdit={handleEdit}
-          />
+          {isPending ? (
+            <p>Đang tải dữ liệu...</p>
+          ) : error ? (
+            <p>Đã xảy ra lỗi khi tải vật liệu</p>
+          ) : (
+            <TableManyColumn
+              columns={columns}
+              data={materials}
+              showEdit
+              onEdit={handleEdit}
+            />
+          )}
         </div>
 
         <div className="mt-4">

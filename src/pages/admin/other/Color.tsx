@@ -1,27 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form"; // Import React Hook Form
+import React, { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
 import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
 import Pagination from "../../../components/admin/ui/Pagination";
-import {
-  fetchColorsByAdminAPI,
-  addColorAPI,
-} from "../../../services/color.service";
 import ValidatedInput from "../../../components/admin/ui/input/ValidatedInput";
 import { colorEnSchema, colorViSchema } from "../../../validator/colorSchema";
 import { usePagination } from "../../../hooks/usePagination";
-
-const columns = [
-  {
-    label: "Tên màu sắc",
-    accessor: (row: ColorItem) => row.name.vi,
-  },
-  {
-    label: "Color name",
-    accessor: (row: ColorItem) => row.name.en,
-  },
-];
+import { useColors } from "../../../hooks/tanstack/color/useColors";
 
 type Props = {
   onClose: () => void;
@@ -38,73 +24,75 @@ type ColorItem = {
   updatedAt: string;
 };
 
+type FormValues = {
+  colorVi: string;
+  colorEn: string;
+};
+
+const columns = [
+  {
+    label: "Tên màu sắc",
+    accessor: (row: ColorItem) => row.name.vi,
+  },
+  {
+    label: "Color name",
+    accessor: (row: ColorItem) => row.name.en,
+  },
+];
+
 const Color: React.FC<Props> = React.memo(({ onClose }) => {
-  const [colors, setColors] = useState<ColorItem[]>([]);
   const [toastSuccess, setToastSuccess] = useState(false);
   const [toastError, setToastError] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const { pagination, setPage, updatePagination } = usePagination(1, 8);
+
+  const { pagination, setPage, updatePagination } = usePagination(1, 6);
+
+  const { colors, paginationData, isPending, error, addColor } = useColors(
+    pagination.page,
+    pagination.limit
+  );
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({
+  } = useForm<FormValues>({
     defaultValues: {
       colorVi: "",
       colorEn: "",
     },
   });
 
-  const fetchColors = useCallback(async () => {
-    const response = await fetchColorsByAdminAPI(
-      pagination.page,
-      pagination.limit
-    );
-
-    if (response?.data) {
-      setColors(response.data.data);
+  useEffect(() => {
+    if (paginationData) {
       updatePagination({
-        totalDocs: response.data.totalDocs,
-        totalPages: response.data.totalPages,
-        currentPage: response.data.currentPage,
-        limit: response.data.limit,
+        totalDocs: paginationData.totalDocs,
+        totalPages: paginationData.totalPages,
+        currentPage: paginationData.currentPage,
+        limit: paginationData.limit,
       });
     }
-  }, [pagination.page, pagination.limit, updatePagination]);
+  }, [paginationData, updatePagination]);
 
-  useEffect(() => {
-    fetchColors();
-  }, [fetchColors]);
-
-  const handleAddColor = async (data: { colorVi: string; colorEn: string }) => {
+  const handleAddColor = async (formData: FormValues) => {
     try {
-      const response = await addColorAPI({
-        name: { vi: data.colorVi, en: data.colorEn },
+      const response = await addColor.mutateAsync({
+        name: {
+          vi: formData.colorVi,
+          en: formData.colorEn,
+        },
       });
 
-      if (response?.data) {
-        reset();
-        setToastMessage(response.message);
-        setToastSuccess(true);
-        setTimeout(() => setToastSuccess(false), 3000);
-        await fetchColors();
-      } else {
-        setToastMessage("Thêm màu sắc thất bại.");
-        setToastError(true);
-        setTimeout(() => setToastError(false), 3000);
-      }
+      reset();
+      setToastMessage(response.message || "Thêm màu sắc thành công");
+      setToastSuccess(true);
+      setTimeout(() => setToastSuccess(false), 3000);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setToastMessage(error.message);
-        setToastError(true);
-        setTimeout(() => setToastError(false), 3000);
-      } else {
-        setToastMessage("Đã xảy ra lỗi không xác định.");
-        setToastError(true);
-        setTimeout(() => setToastError(false), 3000);
-      }
+      const err = error as Error;
+      setToastMessage(err.message || "Thêm màu sắc thất bại");
+      setToastError(true);
+      setTimeout(() => setToastError(false), 3000);
     }
   };
 
@@ -115,7 +103,7 @@ const Color: React.FC<Props> = React.memo(({ onClose }) => {
     >
       <div className="absolute inset-0 bg-black opacity-50" />
       <div
-        className="relative bg-white p-6 rounded-xl shadow-lg w-[35%] h-[85%] z-10 flex flex-col"
+        className="relative bg-white p-6 rounded-xl shadow-lg w-[35%] h-[90%] z-10 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-3">Quản lý màu sắc</h2>
@@ -141,7 +129,6 @@ const Color: React.FC<Props> = React.memo(({ onClose }) => {
                   />
                 )}
               />
-
               <Controller
                 name="colorEn"
                 control={control}
@@ -159,7 +146,6 @@ const Color: React.FC<Props> = React.memo(({ onClose }) => {
               />
             </div>
           </div>
-
           <div className="flex gap-2 flex-col">
             <button
               type="submit"
@@ -171,7 +157,13 @@ const Color: React.FC<Props> = React.memo(({ onClose }) => {
         </form>
 
         <div className="flex-1 overflow-y-auto">
-          <TableManyColumn columns={columns} data={colors} />
+          {isPending ? (
+            <p>Đang tải...</p>
+          ) : error ? (
+            <p>Đã xảy ra lỗi khi tải màu sắc</p>
+          ) : (
+            <TableManyColumn columns={columns} data={colors} />
+          )}
         </div>
 
         <div className="mt-2">
@@ -179,7 +171,7 @@ const Color: React.FC<Props> = React.memo(({ onClose }) => {
             currentPage={pagination.page}
             totalItems={pagination.totalDocs}
             pageSize={pagination.limit}
-            column={true}
+            column={false}
             onPageChange={setPage}
           />
         </div>
