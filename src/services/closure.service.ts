@@ -1,9 +1,7 @@
-import axios from "axios";
-import { baseURL } from "../api/apiClient";
 import { apiRequest } from "../api/apiRequest";
-const auth = axios.create({ baseURL });
+import { auth } from "../api/axiosInterceptor";
 
-type addClosure = {
+export type addClosure = {
   name: { vi: string; en: string };
   description: { vi: string; en: string };
 };

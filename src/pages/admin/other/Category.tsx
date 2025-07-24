@@ -1,20 +1,16 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import ToastSuccess from "../../../components/shared/ToastSuccess";
 import ToastError from "../../../components/shared/ToastError";
 import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
 import Pagination from "../../../components/admin/ui/Pagination";
-import {
-  fetchCategoryAPI,
-  addCategoryAPI,
-  updateCategoryAPI,
-} from "../../../services/category.service";
 import ValidatedInput from "../../../components/admin/ui/input/ValidatedInput";
 import {
   categoryEnSchema,
   categoryViSchema,
 } from "../../../validator/categorySchema";
 import { usePagination } from "../../../hooks/usePagination";
+import { useCategories } from "../../../hooks/tanstack/category/useCategories";
 
 type CategoryItem = {
   id: string;
@@ -41,7 +37,8 @@ const columns = [
 ];
 
 const Category: React.FC<Props> = React.memo(({ onClose }) => {
-  const { pagination, setPage, updatePagination } = usePagination(1, 7);
+  const { pagination, setPage } = usePagination(1, 4);
+
   const {
     control,
     handleSubmit,
@@ -55,7 +52,15 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
     },
   });
 
-  const [categories, setCategories] = useState<CategoryItem[]>([]);
+  const {
+    categories,
+    paginationData,
+    isPending,
+    error,
+    addCategory,
+    updateCategory,
+  } = useCategories(pagination.page, pagination.limit);
+
   const [toastSuccess, setToastSuccess] = useState(false);
   const [toastError, setToastError] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -63,22 +68,11 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
     null
   );
 
-  const fetchCategories = useCallback(async () => {
-    const response = await fetchCategoryAPI(pagination.page, pagination.limit);
-    if (response?.data) {
-      setCategories(response.data.data);
-      updatePagination({
-        totalDocs: response.data.totalDocs,
-        totalPages: response.data.totalPages,
-        currentPage: response.data.currentPage,
-        limit: response.data.limit,
-      });
-    }
-  }, [pagination.page, pagination.limit, updatePagination]);
-
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    if (paginationData) {
+      setPage(paginationData.currentPage);
+    }
+  }, [paginationData, setPage]);
 
   const handleAddCategory = async (data: {
     categoryVi: string;
@@ -86,45 +80,35 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
     isActive: boolean;
   }) => {
     try {
-      let response;
       if (editingCategoryId) {
-        response = await updateCategoryAPI(editingCategoryId, {
-          name: { vi: data.categoryVi, en: data.categoryEn },
-          isActive: data.isActive,
+        await updateCategory.mutateAsync({
+          id: editingCategoryId,
+          data: {
+            name: { vi: data.categoryVi, en: data.categoryEn },
+            isActive: data.isActive,
+          },
         });
+        setToastMessage("Sửa danh mục thành công");
       } else {
-        response = await addCategoryAPI({
+        await addCategory.mutateAsync({
           name: { vi: data.categoryVi, en: data.categoryEn },
         });
+        setToastMessage("Thêm danh mục thành công");
       }
-
-      if (response?.data || response || response.message) {
-        setToastMessage(response.message);
-        setToastSuccess(true);
-        setTimeout(() => setToastSuccess(false), 3000);
-        await fetchCategories();
-        reset({ categoryVi: "", categoryEn: "", isActive: true });
-        setEditingCategoryId(null);
-      } else {
-        setToastMessage("Thêm hoặc sửa danh mục thất bại.");
-        setToastError(true);
-        setTimeout(() => setToastError(false), 3000);
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setToastMessage(error.message);
-        setToastError(true);
-        setTimeout(() => setToastError(false), 3000);
-      } else {
-        setToastMessage("Đã xảy ra lỗi không xác định.");
-        setToastError(true);
-        setTimeout(() => setToastError(false), 3000);
-      }
+      setToastSuccess(true);
+      setTimeout(() => setToastSuccess(false), 3000);
+      reset({ categoryVi: "", categoryEn: "", isActive: true });
+      setEditingCategoryId(null);
+    } catch (err: unknown) {
+      const error = err as Error;
+      setToastMessage(error.message || "Có lỗi xảy ra.");
+      setToastError(true);
+      setTimeout(() => setToastError(false), 3000);
     }
   };
 
   const handleEdit = (id: string) => {
-    const category = categories.find((cat) => cat.id === id);
+    const category = categories.find((cat: CategoryItem) => cat.id === id);
     if (category) {
       setEditingCategoryId(category.id);
       reset({
@@ -147,7 +131,7 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
     >
       <div className="absolute inset-0 bg-black opacity-50 w-full" />
       <div
-        className="relative bg-white p-6 rounded-xl shadow-lg w-[45%] h-[75%] z-10 flex flex-col"
+        className="relative bg-white p-6 rounded-xl shadow-lg w-[45%] h-[90%] z-10 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-3">Quản lý danh mục</h2>
@@ -191,14 +175,13 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
             </div>
           </div>
 
-          <div className="flex gap-2 ">
+          <div className="flex gap-2">
             <button
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded ml-2"
             >
               {editingCategoryId ? "Sửa" : "Thêm"}
             </button>
-
             {editingCategoryId && (
               <button
                 type="button"
@@ -212,18 +195,24 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
         </form>
 
         <div className="flex-1 overflow-y-auto">
-          <TableManyColumn
-            columns={columns}
-            data={categories}
-            showEdit
-            onEdit={handleEdit}
-          />
+          {isPending ? (
+            <p>Đang tải...</p>
+          ) : error ? (
+            <p>Đã xảy ra lỗi khi tải dữ liệu</p>
+          ) : (
+            <TableManyColumn
+              columns={columns}
+              data={categories}
+              showEdit
+              onEdit={handleEdit}
+            />
+          )}
         </div>
 
         <div className="mt-4">
           <Pagination
             currentPage={pagination.page}
-            totalItems={pagination.totalDocs}
+            totalItems={paginationData?.totalDocs || 0}
             pageSize={pagination.limit}
             column={true}
             onPageChange={setPage}
