@@ -1,7 +1,7 @@
 interface Props {
-  subtotal: number;
-  discount: number;
-  total: number;
+  subtotal: string;
+  discount: string;
+  total: string;
 }
 
 const BillOrder: React.FC<Props> = ({ subtotal, discount, total }) => {

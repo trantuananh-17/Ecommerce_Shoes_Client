@@ -1,23 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OrderInfo from "../../../components/admin/order/OrderInfo";
-import OrderNav from "../../../components/admin/order/OrderNav";
+import OrderNav, {
+  type TabType,
+} from "../../../components/admin/order/OrderNav";
 import Pagination from "../../../components/admin/ui/Pagination";
 import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
 import { usePagination } from "../../../hooks/usePagination";
-import type { OrderTable } from "../../../types/orderItem";
+import type { OrderTable } from "../../../types/order.type";
+import { useOrders } from "../../../hooks/tanstack/order/useOrder";
+import { useSearchParams } from "react-router-dom";
+
+type OrderItem = {
+  id: string;
+  name: string;
+  phone: string;
+  province: string;
+  orderStatus: string;
+  paymentType: boolean;
+};
 
 const Order = () => {
-  const orders = [
-    {
-      id: "DH2025719292369",
-      name: "Tuấn Anh",
-      phone: "0918590630",
-      address: "Bắc Ninh",
-      status: "Đang vận chuyển",
-      payment: "Thanh toán qua ví VNPay",
-    },
-  ];
-
   const columns = [
     {
       label: "Mã đơn hàng",
@@ -33,27 +35,51 @@ const Order = () => {
     },
     {
       label: "Địa chỉ",
-      accessor: (row: OrderTable) => row.address,
+      accessor: (row: OrderTable) => row.province,
     },
     {
       label: "Trạng thái",
-      accessor: (row: OrderTable) => row.status,
+      accessor: (row: OrderTable) => row.orderStatus,
     },
     {
       label: "Hình thức thanh toán",
-      accessor: (row: OrderTable) => row.payment,
+      accessor: (row: OrderTable) => row.paymentType,
     },
   ];
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const status = searchParams.get("status") ?? "pending";
 
   const [showInfo, setShowInfo] = useState(false);
   const [selectedOrderStatus, setSelectedOrderStatus] = useState<
     string | undefined
   >("");
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   const { pagination, setPage, updatePagination } = usePagination(1, 8);
+  const { orders, isPending, error, paginationData } = useOrders(
+    status,
+    pagination.page,
+    pagination.limit
+  );
+
+  useEffect(() => {
+    if (paginationData) {
+      updatePagination({
+        totalDocs: paginationData.totalDocs,
+        totalPages: paginationData.totalPages,
+        currentPage: paginationData.currentPage,
+        limit: paginationData.limit,
+      });
+    }
+  }, [paginationData, updatePagination]);
 
   const handleClose = () => {
     setShowInfo(false);
+  };
+
+  const handleStatusChange = (newStatus: TabType) => {
+    setSearchParams({ status: newStatus });
   };
 
   return (
@@ -62,22 +88,32 @@ const Order = () => {
         <h2 className="text-xl m-4">Quản lý thông tin đơn hàng</h2>
 
         <div className="mt-auto">
-          <OrderNav />
+          <OrderNav activeTab={status} onChange={handleStatusChange} />
         </div>
 
         <div className="border border-gray-100 rounded-md flex flex-col flex-1 overflow-y-auto">
-          <TableManyColumn
-            columns={columns}
-            data={orders}
-            showView
-            onView={(id) => {
-              const selected = orders.find((order) => order.id === id);
-              if (selected) {
-                setSelectedOrderStatus(selected.status);
-                setShowInfo(true);
-              }
-            }}
-          />
+          {isPending ? (
+            <p>Đang tải...</p>
+          ) : error ? (
+            <p>Đã xảy ra lỗi khi tải dữ liệu</p>
+          ) : (
+            <TableManyColumn
+              columns={columns}
+              data={orders}
+              showView
+              onView={(id) => {
+                const selected = orders.find(
+                  (order: OrderItem) => order.id === id
+                );
+
+                if (selected) {
+                  setSelectedOrderStatus(selected.status);
+                  setSelectedOrderId(id);
+                  setShowInfo(true);
+                }
+              }}
+            />
+          )}
         </div>
 
         <div className="">
@@ -90,8 +126,12 @@ const Order = () => {
           />
         </div>
       </div>
-      {showInfo && (
-        <OrderInfo status={selectedOrderStatus} onClose={handleClose} />
+      {showInfo && selectedOrderId && (
+        <OrderInfo
+          status={selectedOrderStatus}
+          orderId={selectedOrderId}
+          onClose={handleClose}
+        />
       )}
     </section>
   );

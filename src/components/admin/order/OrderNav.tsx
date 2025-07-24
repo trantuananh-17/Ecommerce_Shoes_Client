@@ -1,6 +1,4 @@
-import { useState } from "react";
-
-type TabType =
+export type TabType =
   | "pending"
   | "shipping"
   | "delivered"
@@ -8,15 +6,14 @@ type TabType =
   | "returned"
   | "all";
 
-const OrderNav = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("pending");
+type Props = {
+  activeTab: string;
+  onChange: (tab: TabType) => void;
+};
 
+const OrderNav: React.FC<Props> = ({ activeTab, onChange }) => {
   const handleTabClick = (tab: TabType): void => {
-    setActiveTab(tab);
-
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("status", tab);
-    window.history.pushState({}, "", currentUrl.toString());
+    onChange(tab);
   };
 
   return (

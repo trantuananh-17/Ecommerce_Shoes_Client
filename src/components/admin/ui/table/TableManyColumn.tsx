@@ -66,70 +66,86 @@ const TableManyColumn = <T extends TableRow>({
           </tr>
         </thead>
         <tbody>
-          {data.map((row, index) => {
-            const isEnabled = !!row[toggleField];
-            return (
-              <tr
-                key={row.id}
-                className="bg-white border-b border-b-gray-300 hover:bg-gray-50 "
+          {data.length > 0 ? (
+            data.map((row, index) => {
+              const isEnabled = !!row[toggleField];
+              return (
+                <tr
+                  key={row.id}
+                  className="bg-white border-b border-b-gray-300 hover:bg-gray-50 "
+                >
+                  <td className="px-2 py-3 text-center text-gray-700">
+                    {index + 1}
+                  </td>
+                  {columns.map((col, colIdx) => (
+                    <td
+                      key={colIdx}
+                      className={`px-2 py-3 text-gray-900 max-w-[100px] truncate`}
+                      title={String(col.accessor(row) ?? "")}
+                    >
+                      {String(col.accessor(row) ?? "")}
+                    </td>
+                  ))}
+                  {showToggle && (
+                    <td className="px-2 py-3 text-center">
+                      <label className="inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={isEnabled}
+                          onChange={() => handleToggle(row.id, !!isEnabled)}
+                          className="sr-only peer"
+                          aria-label={`Toggle enabled for ${row.id}`}
+                        />
+                        <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+                      </label>
+                    </td>
+                  )}
+                  {(showView || showEdit || showDelete) && (
+                    <td className="px-2 py-3 text-right space-x-4">
+                      {showView && (
+                        <button
+                          onClick={() => onView?.(row.id)}
+                          className="bg-green-500 text-white px-5 py-2.5 rounded-lg text-sm hover:bg-yellow-700"
+                        >
+                          Chi tiết
+                        </button>
+                      )}
+                      {showEdit && (
+                        <button
+                          onClick={() => onEdit?.(row.id)}
+                          className="bg-yellow-500 text-white px-5 py-2.5 rounded-lg text-sm hover:bg-yellow-700"
+                        >
+                          Sửa
+                        </button>
+                      )}
+                      {showDelete && (
+                        <button
+                          onClick={() => onDelete?.(row.id)}
+                          className="bg-red-500 text-white px-5 py-2.5 rounded-lg text-sm hover:bg-red-700"
+                        >
+                          Xóa
+                        </button>
+                      )}
+                    </td>
+                  )}
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td
+                colSpan={
+                  1 +
+                  columns.length +
+                  (showToggle ? 1 : 0) +
+                  (showView || showEdit || showDelete ? 1 : 0)
+                }
+                className="text-center py-6 text-gray-500"
               >
-                <td className="px-2 py-3 text-center text-gray-700">
-                  {index + 1}
-                </td>
-                {columns.map((col, colIdx) => (
-                  <td
-                    key={colIdx}
-                    className={`px-2 py-3 text-gray-900 max-w-[100px] truncate`}
-                    title={String(col.accessor(row) ?? "")}
-                  >
-                    {String(col.accessor(row) ?? "")}
-                  </td>
-                ))}
-                {showToggle && (
-                  <td className="px-2 py-3 text-center">
-                    <label className="inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={isEnabled}
-                        onChange={() => handleToggle(row.id, !!isEnabled)}
-                        className="sr-only peer"
-                        aria-label={`Toggle enabled for ${row.id}`}
-                      />
-                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
-                    </label>
-                  </td>
-                )}
-                {(showView || showEdit || showDelete) && (
-                  <td className="px-2 py-3 text-right space-x-4">
-                    {showView && (
-                      <button
-                        onClick={() => onView?.(row.id)}
-                        className="bg-green-500 text-white px-5 py-2.5 rounded-lg text-sm hover:bg-yellow-700"
-                      >
-                        Chi tiết
-                      </button>
-                    )}
-                    {showEdit && (
-                      <button
-                        onClick={() => onEdit?.(row.id)}
-                        className="bg-yellow-500 text-white px-5 py-2.5 rounded-lg text-sm hover:bg-yellow-700"
-                      >
-                        Sửa
-                      </button>
-                    )}
-                    {showDelete && (
-                      <button
-                        onClick={() => onDelete?.(row.id)}
-                        className="bg-red-500 text-white px-5 py-2.5 rounded-lg text-sm hover:bg-red-700"
-                      >
-                        Xóa
-                      </button>
-                    )}
-                  </td>
-                )}
-              </tr>
-            );
-          })}
+                Không có dữ liệu
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
