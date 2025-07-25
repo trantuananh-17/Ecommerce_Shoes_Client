@@ -60,7 +60,7 @@ const TableManyColumn = <T extends TableRow>({
               </th>
             ))}
             {showToggle && <th className="px-2 py-3 text-center">Kích hoạt</th>}
-            {(showEdit || showDelete) && (
+            {(showView || showEdit || showDelete) && (
               <th className="px-2 py-3 text-left sr-only">Actions</th>
             )}
           </tr>
@@ -132,7 +132,7 @@ const TableManyColumn = <T extends TableRow>({
               );
             })
           ) : (
-            <tr>
+            <tr className="bg-white border-b border-b-gray-300 hover:bg-gray-50">
               <td
                 colSpan={
                   1 +
@@ -140,7 +140,7 @@ const TableManyColumn = <T extends TableRow>({
                   (showToggle ? 1 : 0) +
                   (showView || showEdit || showDelete ? 1 : 0)
                 }
-                className="text-center py-6 text-gray-500"
+                className="text-center py-4  text-gray-500"
               >
                 Không có dữ liệu
               </td>

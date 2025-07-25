@@ -15,6 +15,11 @@ export type OrderItemTable = {
   totalPrice: number;
 };
 
+export type OrderNote = {
+  vi: string;
+  en: string;
+};
+
 export interface OrderInfo {
   id: string;
   orderStatus: string;

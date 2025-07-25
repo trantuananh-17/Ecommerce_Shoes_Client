@@ -1,10 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import OrderDetailItem from "./ui/OrderDetailItem";
 import UserDetailItem from "./ui/UserDetailItem";
 import TableManyColumn from "../ui/table/TableManyColumn";
 import BillOrder from "./ui/BillOrder";
-import { fetchOrderDetailAPI } from "../../../services/order.service";
+import {
+  cancelOrderAPI,
+  fetchOrderDetailAPI,
+  updateStatusOrderAPI,
+} from "../../../services/order.service";
 import type { OrderItemTable } from "../../../types/order.type";
 import {
   formatDate,
@@ -35,15 +39,80 @@ interface Props {
   status?: string;
   orderId: string;
   onClose: () => void;
+  onUpdateSuccess?: (message: string) => void;
 }
 
-const OrderInfo: React.FC<Props> = ({ status, orderId, onClose }) => {
+const OrderInfo: React.FC<Props> = ({
+  status,
+  orderId,
+  onClose,
+  onUpdateSuccess,
+}) => {
+  const queryClient = useQueryClient();
+
   const { data, isPending, error } = useQuery({
     queryKey: ["orderDetail", orderId],
     queryFn: () => fetchOrderDetailAPI(orderId),
     staleTime: 1000 * 60 * 5,
     enabled: !!orderId,
   });
+
+  const updateStatus = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      updateStatusOrderAPI(id, status),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orderDetail"] });
+
+      onUpdateSuccess?.(response?.message);
+      onClose();
+    },
+  });
+
+  const cancelOrder = useMutation({
+    mutationFn: ({
+      id,
+      orderNote,
+    }: {
+      id: string;
+      orderNote: { vi: string; en: string };
+    }) => cancelOrderAPI(id, orderNote),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orderDetail"] });
+
+      onUpdateSuccess?.(response.message);
+      onClose();
+    },
+  });
+
+  const handleUpdatePendding = () => {
+    updateStatus.mutate({ id: orderId, status: "shipping" });
+  };
+
+  const handleUpdateShipping = () => {
+    updateStatus.mutate({ id: orderId, status: "delivered" });
+  };
+
+  const handleCancelOrder = () => {
+    cancelOrder.mutate({
+      id: orderId,
+      orderNote: {
+        vi: "Thông tin không hợp lệ.",
+        en: "Invalid ìnormation",
+      },
+    });
+  };
+
+  const handleUpdateOrderCancel = () => {
+    cancelOrder.mutate({
+      id: orderId,
+      orderNote: {
+        vi: "Khách hàng không nhận hàng. Đang chờ chuyển hoàn.",
+        en: "Customer did not accept the order. Return process pending",
+      },
+    });
+  };
 
   const orderDetails = data?.data;
   if (!orderDetails) return null;
@@ -53,13 +122,19 @@ const OrderInfo: React.FC<Props> = ({ status, orderId, onClose }) => {
 
   const renderActionButton = () => {
     switch (status) {
-      case "Đang chờ xử lí":
+      case "Đang chờ xử lý":
         return (
           <div className="flex justify-end gap-4">
-            <button className="bg-green-500 text-white px-5 py-2.5 rounded-lg hover:bg-green-600">
+            <button
+              className="bg-green-500 text-white px-5 py-2.5 rounded-lg hover:bg-green-600"
+              onClick={handleUpdatePendding}
+            >
               Xác nhận
             </button>
-            <button className="bg-yellow-400 text-white px-5 py-2.5 rounded-lg hover:bg-yellow-500">
+            <button
+              className="bg-yellow-400 text-white px-5 py-2.5 rounded-lg hover:bg-yellow-500"
+              onClick={handleCancelOrder}
+            >
               Hủy đơn
             </button>
             <button
@@ -73,10 +148,16 @@ const OrderInfo: React.FC<Props> = ({ status, orderId, onClose }) => {
       case "Đang vận chuyển":
         return (
           <div className="flex justify-end gap-4">
-            <button className="bg-yellow-400 text-white px-5 py-2.5 rounded-lg hover:bg-yellow-500">
+            <button
+              className="bg-yellow-400 text-white px-5 py-2.5 rounded-lg hover:bg-yellow-500"
+              onClick={handleUpdateOrderCancel}
+            >
               Khách không nhận hàng
             </button>
-            <button className="bg-teal-500 text-white px-5 py-2.5 rounded-lg hover:bg-teal-600">
+            <button
+              className="bg-teal-500 text-white px-5 py-2.5 rounded-lg hover:bg-teal-600"
+              onClick={handleUpdateShipping}
+            >
               Xác nhận đã giao hàng
             </button>
             <button
