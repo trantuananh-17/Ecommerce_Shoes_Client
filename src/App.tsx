@@ -19,6 +19,8 @@ import {
   setTotalPrices,
 } from "./stores/slices/cartSlice";
 // import WebSocketComponent from "./pages/user/sockettest";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const dispatch = useDispatch();
@@ -89,7 +91,15 @@ function App() {
     // <>
     //   <WebSocketComponent />
     // </>
-    <>{routing}</>
+    <>
+      {routing}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        pauseOnHover
+        theme="colored"
+      />
+    </>
   );
 }
 

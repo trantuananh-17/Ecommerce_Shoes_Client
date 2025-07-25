@@ -1,13 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import OrderInfo from "../../../components/admin/order/OrderInfo";
 import OrderNav, {
   type TabType,
 } from "../../../components/admin/order/OrderNav";
 import Pagination from "../../../components/admin/ui/Pagination";
 import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
-import { useSearchParams } from "react-router-dom";
 import { fetchOrdersAPI } from "../../../services/order.service";
-import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 type OrderItem = {
   id: string;
@@ -18,20 +19,19 @@ type OrderItem = {
   paymentType: boolean;
   status: string;
 };
+const columns = [
+  { label: "Mã đơn hàng", accessor: (row: OrderItem) => row.id },
+  { label: "Tên khách hàng", accessor: (row: OrderItem) => row.name },
+  { label: "Số điện thoại", accessor: (row: OrderItem) => row.phone },
+  { label: "Địa chỉ", accessor: (row: OrderItem) => row.province },
+  { label: "Trạng thái", accessor: (row: OrderItem) => row.orderStatus },
+  {
+    label: "Hình thức thanh toán",
+    accessor: (row: OrderItem) => row.paymentType,
+  },
+];
 
 const Order = () => {
-  const columns = [
-    { label: "Mã đơn hàng", accessor: (row: OrderItem) => row.id },
-    { label: "Tên khách hàng", accessor: (row: OrderItem) => row.name },
-    { label: "Số điện thoại", accessor: (row: OrderItem) => row.phone },
-    { label: "Địa chỉ", accessor: (row: OrderItem) => row.province },
-    { label: "Trạng thái", accessor: (row: OrderItem) => row.orderStatus },
-    {
-      label: "Hình thức thanh toán",
-      accessor: (row: OrderItem) => row.paymentType,
-    },
-  ];
-
   const [searchParams, setSearchParams] = useSearchParams();
   const status = searchParams.get("status") ?? "pending";
 
@@ -105,7 +105,7 @@ const Order = () => {
                   (order: OrderItem) => order.id === id
                 );
                 if (selected) {
-                  setSelectedOrderStatus(selected.status);
+                  setSelectedOrderStatus(selected.orderStatus);
                   setSelectedOrderId(id);
                   setShowInfo(true);
                 }
@@ -130,6 +130,9 @@ const Order = () => {
           status={selectedOrderStatus}
           orderId={selectedOrderId}
           onClose={handleClose}
+          onUpdateSuccess={(message) => {
+            toast.success(message);
+          }}
         />
       )}
     </section>
