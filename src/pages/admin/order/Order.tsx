@@ -5,10 +5,9 @@ import OrderNav, {
 } from "../../../components/admin/order/OrderNav";
 import Pagination from "../../../components/admin/ui/Pagination";
 import TableManyColumn from "../../../components/admin/ui/table/TableManyColumn";
-import { usePagination } from "../../../hooks/usePagination";
-import type { OrderTable } from "../../../types/order.type";
-import { useOrders } from "../../../hooks/tanstack/order/useOrder";
 import { useSearchParams } from "react-router-dom";
+import { fetchOrdersAPI } from "../../../services/order.service";
+import { useQuery } from "@tanstack/react-query";
 
 type OrderItem = {
   id: string;
@@ -17,38 +16,31 @@ type OrderItem = {
   province: string;
   orderStatus: string;
   paymentType: boolean;
+  status: string;
 };
 
 const Order = () => {
   const columns = [
-    {
-      label: "Mã đơn hàng",
-      accessor: (row: OrderTable) => row.id,
-    },
-    {
-      label: "Tên khách hàng",
-      accessor: (row: OrderTable) => row.name,
-    },
-    {
-      label: "Số điện thoại",
-      accessor: (row: OrderTable) => row.phone,
-    },
-    {
-      label: "Địa chỉ",
-      accessor: (row: OrderTable) => row.province,
-    },
-    {
-      label: "Trạng thái",
-      accessor: (row: OrderTable) => row.orderStatus,
-    },
+    { label: "Mã đơn hàng", accessor: (row: OrderItem) => row.id },
+    { label: "Tên khách hàng", accessor: (row: OrderItem) => row.name },
+    { label: "Số điện thoại", accessor: (row: OrderItem) => row.phone },
+    { label: "Địa chỉ", accessor: (row: OrderItem) => row.province },
+    { label: "Trạng thái", accessor: (row: OrderItem) => row.orderStatus },
     {
       label: "Hình thức thanh toán",
-      accessor: (row: OrderTable) => row.paymentType,
+      accessor: (row: OrderItem) => row.paymentType,
     },
   ];
 
   const [searchParams, setSearchParams] = useSearchParams();
   const status = searchParams.get("status") ?? "pending";
+
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 8,
+    totalDocs: 0,
+    totalPages: 1,
+  });
 
   const [showInfo, setShowInfo] = useState(false);
   const [selectedOrderStatus, setSelectedOrderStatus] = useState<
@@ -56,23 +48,26 @@ const Order = () => {
   >("");
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
-  const { pagination, setPage, updatePagination } = usePagination(1, 8);
-  const { orders, isPending, error, paginationData } = useOrders(
-    status,
-    pagination.page,
-    pagination.limit
-  );
+  const { data, isPending, error } = useQuery({
+    queryKey: ["orders", status, pagination.page, pagination.limit],
+    queryFn: () => fetchOrdersAPI(status, pagination.page, pagination.limit),
+    staleTime: 1000 * 60 * 5,
+    placeholderData: (prev) => prev,
+  });
+
+  const orders = data?.data?.data || [];
+  const paginationData = data?.data;
 
   useEffect(() => {
     if (paginationData) {
-      updatePagination({
+      setPagination((prev) => ({
+        ...prev,
         totalDocs: paginationData.totalDocs,
         totalPages: paginationData.totalPages,
-        currentPage: paginationData.currentPage,
-        limit: paginationData.limit,
-      });
+        page: paginationData.currentPage,
+      }));
     }
-  }, [paginationData, updatePagination]);
+  }, [paginationData]);
 
   const handleClose = () => {
     setShowInfo(false);
@@ -80,6 +75,10 @@ const Order = () => {
 
   const handleStatusChange = (newStatus: TabType) => {
     setSearchParams({ status: newStatus });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPagination((prev) => ({ ...prev, page: newPage }));
   };
 
   return (
@@ -105,7 +104,6 @@ const Order = () => {
                 const selected = orders.find(
                   (order: OrderItem) => order.id === id
                 );
-
                 if (selected) {
                   setSelectedOrderStatus(selected.status);
                   setSelectedOrderId(id);
@@ -122,10 +120,11 @@ const Order = () => {
             totalItems={pagination.totalDocs}
             pageSize={pagination.limit}
             column={true}
-            onPageChange={setPage}
+            onPageChange={handlePageChange}
           />
         </div>
       </div>
+
       {showInfo && selectedOrderId && (
         <OrderInfo
           status={selectedOrderStatus}

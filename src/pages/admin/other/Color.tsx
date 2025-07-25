@@ -7,7 +7,11 @@ import Pagination from "../../../components/admin/ui/Pagination";
 import ValidatedInput from "../../../components/admin/ui/input/ValidatedInput";
 import { colorEnSchema, colorViSchema } from "../../../validator/colorSchema";
 import { usePagination } from "../../../hooks/usePagination";
-import { useColors } from "../../../hooks/tanstack/color/useColors";
+import {
+  addColorAPI,
+  fetchColorsByAdminAPI,
+} from "../../../services/color.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   onClose: () => void;
@@ -46,11 +50,29 @@ const Color: React.FC<Props> = React.memo(({ onClose }) => {
   const [toastMessage, setToastMessage] = useState("");
 
   const { pagination, setPage, updatePagination } = usePagination(1, 6);
+  const queryClient = useQueryClient();
 
-  const { colors, paginationData, isPending, error, addColor } = useColors(
-    pagination.page,
-    pagination.limit
-  );
+  const { data, isPending, error } = useQuery({
+    queryKey: ["colors", pagination.page],
+    queryFn: () => fetchColorsByAdminAPI(pagination.page, pagination.limit),
+    staleTime: 1000 * 60 * 5,
+    placeholderData: (prev) => prev,
+  });
+
+  const addColor = useMutation({
+    mutationFn: (payload: {
+      name: {
+        vi: string;
+        en: string;
+      };
+    }) => addColorAPI(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["colors"] });
+    },
+  });
+
+  const colors = data?.data?.data || [];
+  const paginationData = data?.data;
 
   const {
     control,

@@ -12,8 +12,12 @@ import {
   descriptionEnSchema,
   descriptionViSchema,
 } from "../../../validator/closureSchema";
-import { usePagination } from "../../../hooks/usePagination";
-import { useClosures } from "../../../hooks/tanstack/closure/useClosures";
+import {
+  addClosureAPI,
+  updateClosureAPI,
+  fetchClosureByAdminAPI,
+} from "../../../services/closure.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   onClose: () => void;
@@ -52,16 +56,60 @@ const Closure: React.FC<Props> = React.memo(({ onClose }) => {
   const [toastMessage, setToastMessage] = useState("");
   const [editingClosureId, setEditingClosureId] = useState<string | null>(null);
 
-  const { pagination, setPage, updatePagination } = usePagination(1, 5);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 5,
+    totalPages: 1,
+    totalDocs: 0,
+  });
 
-  const {
-    closures,
-    paginationData,
-    isPending,
-    error,
-    addClosure,
-    updateClosure,
-  } = useClosures(pagination.page, pagination.limit);
+  const queryClient = useQueryClient();
+
+  const { data, isPending, error } = useQuery({
+    queryKey: ["closures", pagination.page, pagination.limit],
+    queryFn: () => fetchClosureByAdminAPI(pagination.page, pagination.limit),
+    staleTime: 1000 * 60 * 5,
+    placeholderData: (prev) => prev,
+  });
+
+  const closures = data?.data?.data || [];
+  const paginationData = data?.data;
+
+  useEffect(() => {
+    if (paginationData) {
+      setPagination((prev) => ({
+        ...prev,
+        totalDocs: paginationData.totalDocs,
+        totalPages: paginationData.totalPages,
+      }));
+    }
+  }, [paginationData]);
+
+  const addClosure = useMutation({
+    mutationFn: (payload: {
+      name: { vi: string; en: string };
+      description: { vi: string; en: string };
+    }) => addClosureAPI(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["closures"] });
+    },
+  });
+
+  const updateClosure = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: {
+        name: { vi: string; en: string };
+        description: { vi: string; en: string };
+      };
+    }) => updateClosureAPI(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["closures"] });
+    },
+  });
 
   const {
     control,
@@ -76,17 +124,6 @@ const Closure: React.FC<Props> = React.memo(({ onClose }) => {
       descriptionEn: "",
     },
   });
-
-  useEffect(() => {
-    if (paginationData) {
-      updatePagination({
-        totalDocs: paginationData.totalDocs,
-        totalPages: paginationData.totalPages,
-        currentPage: paginationData.currentPage,
-        limit: paginationData.limit,
-      });
-    }
-  }, [paginationData, updatePagination]);
 
   const handleAddClosure = async (formData: FormValues) => {
     const payload = {
@@ -261,7 +298,9 @@ const Closure: React.FC<Props> = React.memo(({ onClose }) => {
             totalItems={pagination.totalDocs}
             pageSize={pagination.limit}
             column={true}
-            onPageChange={setPage}
+            onPageChange={(page) =>
+              setPagination((prev) => ({ ...prev, page }))
+            }
           />
         </div>
 

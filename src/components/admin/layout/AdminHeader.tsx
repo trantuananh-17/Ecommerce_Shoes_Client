@@ -36,8 +36,6 @@ const AdminHeader = () => {
     };
   }, []);
 
-  
-
   return (
     <div className="container flex justify-between p-2">
       <div></div>

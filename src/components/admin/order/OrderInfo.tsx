@@ -1,10 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import OrderDetailItem from "./ui/OrderDetailItem";
 import UserDetailItem from "./ui/UserDetailItem";
-import type { OrderItemTable } from "../../../types/order.type";
 import TableManyColumn from "../ui/table/TableManyColumn";
 import BillOrder from "./ui/BillOrder";
-import { useOrderDetail } from "../../../hooks/tanstack/order/useOrderDetail";
+import { fetchOrderDetailAPI } from "../../../services/order.service";
+import type { OrderItemTable } from "../../../types/order.type";
 import {
   formatDate,
   formatPrice,
@@ -37,6 +38,19 @@ interface Props {
 }
 
 const OrderInfo: React.FC<Props> = ({ status, orderId, onClose }) => {
+  const { data, isPending, error } = useQuery({
+    queryKey: ["orderDetail", orderId],
+    queryFn: () => fetchOrderDetailAPI(orderId),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!orderId,
+  });
+
+  const orderDetails = data?.data;
+  if (!orderDetails) return null;
+
+  const orderInfo = orderDetails.orderInfo;
+  const orderItems = orderDetails.orderItemsInfo;
+
   const renderActionButton = () => {
     switch (status) {
       case "Đang chờ xử lí":
@@ -56,7 +70,6 @@ const OrderInfo: React.FC<Props> = ({ status, orderId, onClose }) => {
             </button>
           </div>
         );
-
       case "Đang vận chuyển":
         return (
           <div className="flex justify-end gap-4">
@@ -74,7 +87,6 @@ const OrderInfo: React.FC<Props> = ({ status, orderId, onClose }) => {
             </button>
           </div>
         );
-
       default:
         return (
           <div className="flex justify-end">
@@ -89,13 +101,6 @@ const OrderInfo: React.FC<Props> = ({ status, orderId, onClose }) => {
     }
   };
 
-  const { orderDetails, isPending, error } = useOrderDetail(orderId);
-
-  if (!orderDetails) return null;
-
-  const orderInfo = orderDetails.orderInfo;
-  const orderItems = orderDetails.orderItemsInfo;
-
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div
@@ -106,7 +111,9 @@ const OrderInfo: React.FC<Props> = ({ status, orderId, onClose }) => {
       <div className="relative z-10 flex items-start justify-center px-2 py-10">
         <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-4xl">
           <div className="flex justify-between mb-5">
-            <h3 className="text-md font-semibold">ĐƠN HÀNG - DH202571969700</h3>
+            <h3 className="text-md font-semibold">
+              ĐƠN HÀNG - {orderInfo?.id}
+            </h3>
             <button type="button" onClick={onClose}>
               <X />
             </button>
@@ -171,6 +178,7 @@ const OrderInfo: React.FC<Props> = ({ status, orderId, onClose }) => {
                   />
                 </div>
               </div>
+
               <div className="mb-6">
                 <TableManyColumn columns={columns} data={orderItems} />
               </div>

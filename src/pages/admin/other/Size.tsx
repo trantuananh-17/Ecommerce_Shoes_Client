@@ -7,7 +7,8 @@ import ToastError from "../../../components/shared/ToastError";
 import Pagination from "../../../components/admin/ui/Pagination";
 import { usePagination } from "../../../hooks/usePagination";
 import { sizeSchema } from "../../../validator/sizeSchema";
-import { useSizes } from "../../../hooks/tanstack/size/useSize";
+import { addSizeAPI, fetchSizesAPI } from "../../../services/size.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   onClose: () => void;
@@ -20,10 +21,24 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
 
   const { pagination, setPage, updatePagination } = usePagination(1, 5);
 
-  const { sizes, paginationData, isPending, error, addSize } = useSizes(
-    pagination.page,
-    pagination.limit
-  );
+  const queryClient = useQueryClient();
+
+  const { data, isPending, error } = useQuery({
+    queryKey: ["sizes", pagination.page],
+    queryFn: () => fetchSizesAPI(pagination.page, pagination.limit),
+    staleTime: 1000 * 60 * 5,
+    placeholderData: (prev) => prev,
+  });
+
+  const mutation = useMutation({
+    mutationFn: (size: string) => addSizeAPI(size),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sizes"] });
+    },
+  });
+
+  const sizes = data?.data?.data || [];
+  const paginationData = data?.data;
 
   const {
     control,
@@ -52,7 +67,7 @@ const Size: React.FC<Props> = React.memo(({ onClose }) => {
 
   const onSubmit = async (formData: { size: string }) => {
     try {
-      const response = await addSize.mutateAsync(formData.size);
+      const response = await mutation.mutateAsync(formData.size);
       setToastMessage(response?.message || "Thêm kích cỡ thành công");
       setToastSuccess(true);
       setTimeout(() => setToastSuccess(false), 3000);

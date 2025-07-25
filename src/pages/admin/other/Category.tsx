@@ -9,8 +9,12 @@ import {
   categoryEnSchema,
   categoryViSchema,
 } from "../../../validator/categorySchema";
-import { usePagination } from "../../../hooks/usePagination";
-import { useCategories } from "../../../hooks/tanstack/category/useCategories";
+import {
+  addCategoryAPI,
+  fetchCategoryAPI,
+  updateCategoryAPI,
+} from "../../../services/category.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 type CategoryItem = {
   id: string;
@@ -37,7 +41,19 @@ const columns = [
 ];
 
 const Category: React.FC<Props> = React.memo(({ onClose }) => {
-  const { pagination, setPage } = usePagination(1, 4);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 4,
+    totalDocs: 0,
+    totalPages: 0,
+  });
+
+  const [toastSuccess, setToastSuccess] = useState(false);
+  const [toastError, setToastError] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
+    null
+  );
 
   const {
     control,
@@ -52,27 +68,48 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
     },
   });
 
-  const {
-    categories,
-    paginationData,
-    isPending,
-    error,
-    addCategory,
-    updateCategory,
-  } = useCategories(pagination.page, pagination.limit);
+  const queryClient = useQueryClient();
 
-  const [toastSuccess, setToastSuccess] = useState(false);
-  const [toastError, setToastError] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
-    null
-  );
+  const { data, isPending, error } = useQuery({
+    queryKey: ["categories", pagination.page, pagination.limit],
+    queryFn: () => fetchCategoryAPI(pagination.page, pagination.limit),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const addCategory = useMutation({
+    mutationFn: (data: { name: { vi: string; en: string } }) =>
+      addCategoryAPI(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+
+  const updateCategory = useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { name: { vi: string; en: string }; isActive: boolean };
+    }) => updateCategoryAPI(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+
+  const categories = data?.data?.data || [];
+  const paginationData = data?.data;
 
   useEffect(() => {
     if (paginationData) {
-      setPage(paginationData.currentPage);
+      setPagination((prev) => ({
+        ...prev,
+        totalDocs: paginationData.totalDocs,
+        totalPages: paginationData.totalPages,
+        page: paginationData.currentPage,
+      }));
     }
-  }, [paginationData, setPage]);
+  }, [paginationData]);
 
   const handleAddCategory = async (data: {
     categoryVi: string;
@@ -122,6 +159,10 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
   const handleCancelEdit = () => {
     setEditingCategoryId(null);
     reset({ categoryVi: "", categoryEn: "", isActive: true });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPagination((prev) => ({ ...prev, page: newPage }));
   };
 
   return (
@@ -212,10 +253,10 @@ const Category: React.FC<Props> = React.memo(({ onClose }) => {
         <div className="mt-4">
           <Pagination
             currentPage={pagination.page}
-            totalItems={paginationData?.totalDocs || 0}
+            totalItems={pagination.totalDocs}
             pageSize={pagination.limit}
             column={true}
-            onPageChange={setPage}
+            onPageChange={handlePageChange}
           />
         </div>
 

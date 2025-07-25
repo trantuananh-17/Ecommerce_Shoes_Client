@@ -13,7 +13,12 @@ import {
   materialViSchema,
 } from "../../../validator/materialSchema";
 import { usePagination } from "../../../hooks/usePagination";
-import { useMaterials } from "../../../hooks/tanstack/material/useMaterials";
+import {
+  addMaterialAPI,
+  updateMaterialAPI,
+  fetchMaterialsByAdminAPI,
+} from "../../../services/material.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 type MaterialItem = {
   id: string;
@@ -55,15 +60,43 @@ const Material: React.FC<Props> = React.memo(({ onClose }) => {
   );
 
   const { pagination, setPage, updatePagination } = usePagination(1, 5);
+  const queryClient = useQueryClient();
 
-  const {
-    materials,
-    paginationData,
-    isPending,
-    error,
-    addMaterial,
-    updateMaterial,
-  } = useMaterials(pagination.page, pagination.limit);
+  const { data, isPending, error } = useQuery({
+    queryKey: ["materials", pagination.page],
+    queryFn: () => fetchMaterialsByAdminAPI(pagination.page, pagination.limit),
+    staleTime: 1000 * 60 * 5,
+    placeholderData: (prev) => prev,
+  });
+
+  const addMaterial = useMutation({
+    mutationFn: (payload: {
+      name: { vi: string; en: string };
+      description: { vi: string; en: string };
+    }) => addMaterialAPI(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["materials"] });
+    },
+  });
+
+  const updateMaterial = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: {
+        name: { vi: string; en: string };
+        description: { vi: string; en: string };
+      };
+    }) => updateMaterialAPI(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["materials"] });
+    },
+  });
+
+  const materials = data?.data?.data || [];
+  const paginationData = data?.data;
 
   const {
     control,
