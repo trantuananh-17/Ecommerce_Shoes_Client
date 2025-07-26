@@ -45,3 +45,31 @@ export const fadeInFast = (
     },
   };
 };
+
+export const listDrawer = {
+  enter: {
+    height: "auto",
+    opacity: 1,
+    overflow: "hidden",
+    transition: { duration: 0.3 },
+  },
+  exit: {
+    height: 0,
+    opacity: 0,
+    overflow: "hidden",
+    transition: { duration: 0.2 },
+  },
+};
+
+export const subMenuDrawer = {
+  enter: {
+    height: "auto",
+    overflow: "hidden",
+    transition: { duration: 0.2 },
+  },
+  exit: {
+    height: 0,
+    overflow: "hidden",
+    transition: { duration: 0.2 },
+  },
+};

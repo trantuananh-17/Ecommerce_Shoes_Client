@@ -21,3 +21,7 @@ export const addClosureAPI = async (closure: addClosure) => {
 export const updateClosureAPI = async (id: string, closure: addClosure) => {
   return await apiRequest(auth.put(`/closures/${id}`, closure));
 };
+
+export const fetchClosureNameAPI = async () => {
+  return await apiRequest(auth.get(`/closures`));
+};

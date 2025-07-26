@@ -1,8 +1,6 @@
-import ico_search from "../../../../assets/images/ico_search.png";
-import ico_heart from "../../../../assets/images/ico_heart.png";
 import { useNavigate } from "react-router-dom";
-import AverageRating from "../AverageRating";
 import { formatCurrency } from "../../../../utils/formatCurrency";
+import AverageRating from "../AverageRating";
 
 interface Props {
   id: string;
@@ -36,9 +34,9 @@ const ProductItem: React.FC<Props> = ({
   return (
     <li
       onClick={handleClick}
-      className="mt-6 md:mt-0 text-center group relative"
+      className="mt-6 md:mt-0 text-center group relative "
     >
-      <div className="bg-red">
+      <div className="bg-red ">
         {sizesWithQuantity === 0 ? (
           <span className="absolute py-1 text-xs px-2 top-3 left-3 bg-black text-white rounded-xl">
             Out of stock
@@ -51,39 +49,8 @@ const ProductItem: React.FC<Props> = ({
           <></>
         )}
 
-        <ul className="absolute bottom-28 left-4 z-10 flex flex-col gap-3">
-          <li className="opacity-0 translate-y-4 duration-200 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
-            <button
-              type="button"
-              className="shadow-lg p-3 rounded-full bg-white block hover:bg-slate-200 transition-all"
-            >
-              <img
-                src={ico_heart}
-                className="image size-4 rouded-full"
-                alt=""
-              />
-            </button>
-          </li>
-          <li className="opacity-0 translate-y-4 duration-200 group-hover:opacity-100 group-hover:translate-y-0 transition-all delay-200">
-            <button
-              type="button"
-              className="shadow-lg p-3 rounded-full bg-white block hover:bg-slate-100 transition-all"
-            >
-              <img
-                src={ico_search}
-                className="image size-4 rouded-full"
-                alt=""
-              />
-            </button>
-          </li>
-        </ul>
-
         <div className="rounded-xl overflow-hidden bg-white lg:h-[385px]">
-          <img
-            className="block size-full object-cover image"
-            src={thumbnail}
-            alt=""
-          />
+          <img className="size-full image " src={thumbnail} alt="" />
         </div>
         <div className="flex justify-center items-center my-1">
           <AverageRating averageRating={averageRating} />

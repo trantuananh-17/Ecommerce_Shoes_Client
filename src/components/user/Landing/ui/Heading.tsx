@@ -16,7 +16,7 @@ const Heading: React.FC<Props> = ({ title, subtitle, link, hidden }) => {
         variants={fadeInFast("right", 0)}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.2 }}
       >
         <h2 className="text-3xl font-bold">{title}</h2>
         {subtitle && <p className="mt-2 text-lightGray">{subtitle}</p>}
@@ -26,7 +26,7 @@ const Heading: React.FC<Props> = ({ title, subtitle, link, hidden }) => {
           variants={fadeInFast("left", 0)}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.2 }}
         >
           <NavLink
             to={link}

@@ -6,6 +6,11 @@ export type addMaterial = {
   description: { vi: string; en: string };
 };
 
+export type MaterialResponse = {
+  id: string;
+  name: string;
+};
+
 export const fetchMaterialsByAdminAPI = async (page = 1, limit = 7) => {
   return await apiRequest(
     auth.get(`/materials/admin?page=${page}&limit=${limit}`, {
@@ -20,4 +25,8 @@ export const addMaterialAPI = async (closure: addMaterial) => {
 
 export const updateMaterialAPI = async (id: string, closure: addMaterial) => {
   return await apiRequest(auth.put(`/materials/${id}`, closure));
+};
+
+export const fetchMaterialNameAPI = async () => {
+  return await apiRequest(auth.get(`/materials`));
 };

@@ -14,7 +14,7 @@ const Benefits = () => {
           variants={fadeIn("right", 0.1)}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, amount: 0.1 }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           <ul className="grid grid-cols-2 lg:grid-cols-4 gap-5 items-center py-14">
             <Benefit icon={ico_freeship} text="Free Shipping Over $50" />

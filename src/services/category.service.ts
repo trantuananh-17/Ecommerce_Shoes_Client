@@ -37,3 +37,7 @@ export const updateCategoryAPI = async (
 export const deleteCategoryAPI = async (category: addCategory) => {
   return await apiRequest(auth.post("/categories", category));
 };
+
+export const fetchCategoryNameAPI = async () => {
+  return await apiRequest(auth.get("/categories"));
+};

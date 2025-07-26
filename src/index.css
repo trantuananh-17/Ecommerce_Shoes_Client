@@ -65,6 +65,7 @@ body {
 
   .image {
     max-width: var(--full);
+    max-height: var(--full);
     display: block;
     object-fit: cover;
   }

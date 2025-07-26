@@ -27,3 +27,11 @@ export const fetchDetailProducttAPI = async (slug: string) => {
     })
   );
 };
+
+export const fetchListProductsAPI = async (page = 1, limit = 12) => {
+  return await apiRequest(
+    auth.get(`/products?page=${page}&limit=${limit}`, {
+      headers: { "Cache-Control": "no-cache" },
+    })
+  );
+};

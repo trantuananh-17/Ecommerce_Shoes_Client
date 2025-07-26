@@ -24,3 +24,7 @@ export const updateActiveBrandAPI = async (id: string, active: boolean) => {
 export const deleteBrandAPI = async (id: string) => {
   return await apiRequest(auth.delete(`/brands/${id}`));
 };
+
+export const fetchBrandNameAPI = async () => {
+  return await apiRequest(auth.get(`/brands/list-name`));
+};
