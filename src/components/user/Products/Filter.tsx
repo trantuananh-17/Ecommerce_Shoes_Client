@@ -39,7 +39,7 @@ const Filter: React.FC<Props> = ({ menus }) => {
   };
 
   return (
-    <div className="flex flex-col gap-3 ">
+    <div className="flex flex-col gap-4 ">
       <div
         className="flex gap-2 items-center cursor-pointer bg-gray-100 p-3 rounded-xl"
         onClick={() => setOpenMenus(!openMenus)}

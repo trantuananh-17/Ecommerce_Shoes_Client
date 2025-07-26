@@ -11,11 +11,16 @@ import { fetchMaterialNameAPI } from "../../../services/material.service";
 import { fetchListProductsAPI } from "../../../services/product.service";
 import { Menus } from "../../../utils/filter.util";
 import { updateMenus, type MenuItem } from "../../../utils/updateMenu";
+import Pagination from "../../../components/user/Products/ui/Pagination";
+import { useSearchParams } from "react-router-dom";
 
 const Products = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.get("page") ?? 1;
+
   const [menus, setMenus] = useState<MenuItem[]>(Menus);
   const [pagination, setPagination] = useState({
-    page: 1,
+    page: Number(page),
     limit: 9,
     totalDocs: 0,
     totalPages: 1,
@@ -79,16 +84,31 @@ const Products = () => {
       }));
     }
   }, [paginationData]);
+
+  useEffect(() => {
+    setSearchParams({ page: pagination.page.toString() });
+  }, [pagination.page, setSearchParams]);
+
+  const handlePageChange = (newPage: number) => {
+    setPagination((prev) => ({ ...prev, page: newPage }));
+  };
+
   return (
     <div className="bg-white">
       <Banner />
-      <div className="flex p-10 gap-10 min-h-[40vh] ">
+      <div className="flex p-8 gap-8 min-h-[40vh] ">
         <Filter menus={menus} />
         <div className="relative">
           <MenuBtn />
           <ProductList products={products} />
         </div>
       </div>
+      <Pagination
+        currentPage={pagination.page}
+        totalItems={pagination.totalDocs}
+        pageSize={pagination.limit}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

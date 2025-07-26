@@ -6,7 +6,13 @@ interface Props {
 }
 
 const MenuSort: React.FC<Props> = ({ open }) => {
-  const sortOptions = ["Sắp xếp theo thời gian", "Sắp xếp theo tên"];
+  const sortOptions = [
+    "Mặc định",
+    "Sắp xếp giảm giá tăng dần",
+    "Sắp xếp giảm giá giảm dần",
+    "Sắp xếp giá tăng dần",
+    "Sắp xếp giá giảm dần",
+  ];
 
   return (
     <AnimatePresence>

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import ico_heart from "../../../../assets/images/ico_heart.png";
 import { formatCurrency } from "../../../../utils/formatCurrency";
 import AverageRating from "../AverageRating";
 
@@ -48,6 +49,21 @@ const ProductItem: React.FC<Props> = ({
         ) : (
           <></>
         )}
+
+        <ul className="absolute bottom-28 left-4 z-10 flex flex-col gap-3">
+          <li className="opacity-0 translate-y-4 duration-200 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
+            <button
+              type="button"
+              className="shadow-lg p-3 rounded-full bg-white block hover:bg-slate-200 transition-all"
+            >
+              <img
+                src={ico_heart}
+                className="image size-4 rouded-full"
+                alt=""
+              />
+            </button>
+          </li>
+        </ul>
 
         <div className="rounded-xl overflow-hidden bg-white lg:h-[385px]">
           <img className="size-full image " src={thumbnail} alt="" />

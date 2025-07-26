@@ -11,7 +11,7 @@ const Header = () => {
   const { cartLoaded, totalQuantity } = useSelector(getCartState);
 
   return (
-    <header className="py-5 lg:py-8 sticky top-0 z-10 bg-white shadow-lg">
+    <header className="py-5 lg:py-8 sticky top-0 z-50 bg-white shadow-lg">
       <div className="container flex items-center">
         <h1 className="shrink-0 mr-5">
           <NavLink to="/" className="block max-w-[130px]">
