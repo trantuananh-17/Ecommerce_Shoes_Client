@@ -51,7 +51,7 @@ const CartItemInfo: React.FC<Props> = ({
 
   return (
     <div className="flex">
-      <div className="p-2 lg:p-5 border border-gray w-2/4">
+      <div className="p-2 md:p-5 border border-gray w-2/4">
         <div className="flex items-center gap-3">
           <div className="w-28 overflow-hidden">
             <img src={cartItem.thumbnail} alt="Thumbnail ảnh giày" />
@@ -71,11 +71,11 @@ const CartItemInfo: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="p-5 border border-gray w-1/4 justify-center lg:flex hidden">
+      <div className="p-5 border border-gray w-1/4 justify-center md:flex hidden">
         <div className="flex items-center w-max relative">
           <button
             type="button"
-            className="text-lg absolute left-4 top-1/2 transform -translate-y-1/2"
+            className="text-md absolute left-4 top-1/2 transform -translate-y-1/2"
             onClick={onDecrease}
             disabled={isDecreaseDisabled}
           >
@@ -96,7 +96,7 @@ const CartItemInfo: React.FC<Props> = ({
 
           <button
             type="button"
-            className="text-lg absolute right-4 top-1/2 transform -translate-y-1/2"
+            className="text-md absolute right-4 top-1/2 transform -translate-y-1/2"
             onClick={onIncrease}
             disabled={isIncreaseDisabled}
           >

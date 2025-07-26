@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Filter from "../../../components/user/Products/Filter";
 import ProductList from "../../../components/user/Products/ProductList";
 import Banner from "../../../components/user/Products/ui/Banner";
@@ -21,7 +21,7 @@ const Products = () => {
   const [menus, setMenus] = useState<MenuItem[]>(Menus);
   const [pagination, setPagination] = useState({
     page: Number(page),
-    limit: 9,
+    limit: 12,
     totalDocs: 0,
     totalPages: 1,
   });
@@ -57,7 +57,7 @@ const Products = () => {
           prevMenus,
           MaterialData.data,
           CategoriesData.data,
-          BrandsData.response,
+          BrandsData.data,
           ClosuresData.data
         )
       );
@@ -91,12 +91,27 @@ const Products = () => {
 
   const handlePageChange = (newPage: number) => {
     setPagination((prev) => ({ ...prev, page: newPage }));
+    scrollToProducts();
+  };
+
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToProducts = () => {
+    if (sectionRef.current) {
+      window.scrollTo({
+        top: sectionRef.current.offsetTop - 165,
+        behavior: "smooth",
+      });
+    }
   };
 
   return (
     <div className="bg-white">
       <Banner />
-      <div className="flex p-8 gap-8 min-h-[40vh] ">
+      <div
+        className="flex justify-around lg:justify-around md:gap-4 lg:gap-1 min-h-[40vh]  container"
+        ref={sectionRef}
+      >
         <Filter menus={menus} />
         <div className="relative">
           <MenuBtn />

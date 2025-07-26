@@ -30,11 +30,24 @@ export const fetchDetailProducttAPI = async (slug: string) => {
 
 export const fetchListProductsAPI = async (
   page: number = 1,
-  limit: number = 12
+  limit: number = 12,
+  gender?: string,
+  category?: string,
+  brand?: string,
+  closure?: string,
+  material?: string,
+  sortBy?: string
 ) => {
   return await apiRequest(
-    auth.get(`/products?page=${page}&limit=${limit}`, {
-      headers: { "Cache-Control": "no-cache" },
-    })
+    auth.get(
+      `/products?page=${page}&limit=${limit}&gender=${gender || ""}&category=${
+        category || ""
+      }&brand=${brand || ""}&closure=${closure || ""}&material=${
+        material || ""
+      }&sortBy=${sortBy || ""}`,
+      {
+        headers: { "Cache-Control": "no-cache" },
+      }
+    )
   );
 };

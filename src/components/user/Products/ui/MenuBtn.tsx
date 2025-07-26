@@ -6,7 +6,7 @@ const MenuBtn = () => {
   const [openSort, setOpenSort] = useState(false);
 
   return (
-    <div className="absolute z-10 left-0 bg-gray-100 p-3 rounded-xl backdrop:blur">
+    <div className="absolute z-10 left-0 bg-gray-100 p-3 rounded-xl ">
       <button
         onClick={() => setOpenSort((prev) => !prev)}
         className="flex items-center gap-30"

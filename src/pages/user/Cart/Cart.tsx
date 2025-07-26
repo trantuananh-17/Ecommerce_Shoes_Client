@@ -122,10 +122,10 @@ const Cart = () => {
       <div className="">
         <h2 className="text-3xl font-semibold text-center">Shopping Cart</h2>
         <div className="container">
-          <div className="lg:grid grid-cols-6 mt-10 gap-8">
+          <div className="md:grid grid-cols-6 mt-10 gap-8">
             <div className="col-span-4">
               <div className="border border-gray rounded-lg">
-                <div className="hidden lg:flex">
+                <div className="hidden md:flex">
                   <div className="p-5 border border-gray w-2/4 flex items-center justify-center">
                     Product
                   </div>
@@ -183,7 +183,7 @@ const Cart = () => {
               </div>
             </div>
 
-            <div className="col-span-2 mt-6 lg:mt-0">
+            <div className="col-span-2 mt-6 md:mt-0">
               <div className="p-7 bg-[#f7f4ef] rounded-lg">
                 <h3 className="uppercase font-medium text-sm">
                   FREE SHIPPING ON ORDERS $100.00

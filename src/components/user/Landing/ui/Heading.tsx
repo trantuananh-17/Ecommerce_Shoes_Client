@@ -11,7 +11,7 @@ interface Props {
 
 const Heading: React.FC<Props> = ({ title, subtitle, link, hidden }) => {
   return (
-    <div className="lg:flex justify-between items-end" data-aos="fade-in">
+    <div className="md:flex justify-between items-end" data-aos="fade-in">
       <motion.div
         variants={fadeInFast("right", 0)}
         initial="hidden"
@@ -30,7 +30,7 @@ const Heading: React.FC<Props> = ({ title, subtitle, link, hidden }) => {
         >
           <NavLink
             to={link}
-            className="mt-6 lg:mt-0 h-9 border border-black px-7 inline-flex items-center font-semibold text-black rounded-full text-[15px] hover:bg-black hover:text-white transition-all duration-300"
+            className="mt-6 md:mt-0 h-9 border border-black px-7 inline-flex items-center font-semibold text-black rounded-full text-[15px] hover:bg-black hover:text-white transition-all duration-300"
           >
             View All
           </NavLink>

@@ -7,7 +7,7 @@ interface Props {
 
 const ProductList: React.FC<Props> = ({ products }) => {
   return (
-    <ul className="grid grid-cols-3 gap-5 mt-15">
+    <ul className="mt-15 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 lg:gap-1 max-w-[1260px]">
       {products.map((product) => (
         <ProductItem key={product.id} {...product} />
       ))}

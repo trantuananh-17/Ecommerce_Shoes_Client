@@ -35,7 +35,7 @@ const ProductItem: React.FC<Props> = ({
   return (
     <li
       onClick={handleClick}
-      className="mt-6 md:mt-0 text-center group relative "
+      className="mt-6 md:mt-0 text-center group relative w-[calc(100% - 60px)/4]"
     >
       <div className="bg-red ">
         {sizesWithQuantity === 0 ? (
@@ -65,7 +65,7 @@ const ProductItem: React.FC<Props> = ({
           </li>
         </ul>
 
-        <div className="rounded-xl overflow-hidden bg-white lg:h-[385px]">
+        <div className="rounded-xl overflow-hidden bg-white md:h-[300px] lg:h-[385px]">
           <img className="size-full image " src={thumbnail} alt="" />
         </div>
         <div className="flex justify-center items-center my-1">

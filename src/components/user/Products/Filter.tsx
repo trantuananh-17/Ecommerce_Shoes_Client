@@ -41,11 +41,11 @@ const Filter: React.FC<Props> = ({ menus }) => {
   return (
     <div className="flex flex-col gap-4 ">
       <div
-        className="flex gap-2 items-center cursor-pointer bg-gray-100 p-3 rounded-xl"
+        className="flex gap-2 items-center cursor-pointer bg-gray-100 p-3 rounded-xl  "
         onClick={() => setOpenMenus(!openMenus)}
       >
         <Menu />
-        <h2 className="font-bold text-xl">Filter Products</h2>
+        <h2 className="font-bold text-lg whitespace-nowrap">Filter Products</h2>
       </div>
 
       <AnimatePresence>

@@ -16,7 +16,7 @@ const Benefits = () => {
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}
         >
-          <ul className="grid grid-cols-2 lg:grid-cols-4 gap-5 items-center py-14">
+          <ul className="grid grid-cols-2 md:grid-cols-4 gap-5 items-center py-14">
             <Benefit icon={ico_freeship} text="Free Shipping Over $50" />
             <Benefit icon={ico_quality} text="Quality Assurance" />
             <Benefit icon={ico_return} text="Return within 14 days" />

@@ -2,16 +2,15 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useRoutes } from "react-router-dom";
 
+import { getAccessToken } from "./api/apiClient";
+import AxiosInterceptor, { auth } from "./api/axiosInterceptor";
 import AppRoutes from "./routes";
-import AxiosInterceptor from "./api/axiosInterceptor";
+import { fetchCartSumaryAPI, fetchDataCartAPI } from "./services/cart.service";
 import {
   logoutState,
-  updateAuthState,
   setAuthLoaded,
+  updateAuthState,
 } from "./stores/slices/authSlice";
-import { auth } from "./api/axiosInterceptor";
-import { getAccessToken } from "./api/apiClient";
-import { fetchCartSumaryAPI, fetchDataCartAPI } from "./services/cart.service";
 import {
   setCartItems,
   setCartLoaded,

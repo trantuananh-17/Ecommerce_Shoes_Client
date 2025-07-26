@@ -13,7 +13,7 @@ const ListProduct = () => {
   }
 
   return (
-    <ul className="mt-8 lg:grid grid-cols-4 gap-7 flex-1">
+    <ul className="mt-8 md:grid grid-cols-4 gap-7 flex-1">
       {bestSellerList.map((product: IProductItem, index) => (
         <motion.div
           variants={fadeIn("right", +`0.${index}`)}

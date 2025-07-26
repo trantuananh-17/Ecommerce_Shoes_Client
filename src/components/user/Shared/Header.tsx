@@ -11,14 +11,14 @@ const Header = () => {
   const { cartLoaded, totalQuantity } = useSelector(getCartState);
 
   return (
-    <header className="py-5 lg:py-8 sticky top-0 z-50 bg-white shadow-lg">
+    <header className="py-5 md:py-8 sticky top-0 z-50 bg-white shadow-lg">
       <div className="container flex items-center">
         <h1 className="shrink-0 mr-5">
           <NavLink to="/" className="block max-w-[130px]">
             <img src={logo} alt="Logo" className="image" />
           </NavLink>
         </h1>
-        <div className="relative ml-auto lg:mr-20 max-w-[500px] w-full hidden lg:block">
+        <div className="relative ml-auto md:mr-20 max-w-[500px] w-full hidden md:block">
           <input
             type="text"
             placeholder="Search..."
@@ -30,7 +30,7 @@ const Header = () => {
             </span>
           </div>
         </div>
-        <nav className="mr-28 hidden lg:block ml-auto">
+        <nav className="mr-28 hidden md:block ml-auto">
           <ul className="flex items-center gap-10">
             <li className="relative after:absolute after:h-[1.5px] after:bg-black after:left-0 after:bottom-[-2px] after:transition-all after:duration-300 after:w-full after:scale-x-0 hover:after:-scale-x-100">
               <NavLink to="/">Home</NavLink>
@@ -47,7 +47,7 @@ const Header = () => {
           </ul>
         </nav>
         <div className="flex items-center gap-6 ml-auto lg:ml-0 shrink-0">
-          <a href="#none" className="lg:hidden">
+          <a href="#none" className="md:hidden">
             <img className="size-5" src={ico_search} alt="" />
           </a>
           <NavLink to={"/login"}>
